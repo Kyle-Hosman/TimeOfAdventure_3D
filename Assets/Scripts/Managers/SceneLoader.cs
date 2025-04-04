@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System;
 using System.Collections;
 
 public class SceneLoader : MonoBehaviour
@@ -8,6 +9,9 @@ public class SceneLoader : MonoBehaviour
     [SerializeField] private string uiSceneName = "UI";
     [SerializeField] private string playerSceneName = "Player";
     [SerializeField] private string environmentSceneName = "Environment1"; // Set this dynamically if needed
+
+    // Define the OnPlayerLoaded event
+    public static event Action<GameObject> OnPlayerLoaded;
 
     private void Start()
     {
@@ -24,6 +28,7 @@ public class SceneLoader : MonoBehaviour
 
         // Load Player scene
         yield return LoadSceneAsync(playerSceneName);
+        NotifyPlayerLoaded(); // Notify that the player has been loaded
 
         // Finally, load the environment scene
         yield return LoadSceneAsync(environmentSceneName);
@@ -43,6 +48,21 @@ public class SceneLoader : MonoBehaviour
         }
     }
 
+    private void NotifyPlayerLoaded()
+    {
+        // Find the player GameObject in the loaded scene
+        GameObject player = GameObject.FindWithTag("Player");
+        if (player != null)
+        {
+            // Trigger the OnPlayerLoaded event
+            OnPlayerLoaded?.Invoke(player);
+        }
+        else
+        {
+            Debug.LogWarning("Player GameObject not found in the loaded scene.");
+        }
+    }
+
     public void TogglePlayerCamera(bool isActive)
     {
         var playerCamera = GameObject.FindWithTag("MainCamera");
@@ -51,8 +71,6 @@ public class SceneLoader : MonoBehaviour
             playerCamera.SetActive(isActive);
         }
     }
-
-    // Example usage: Call this method when switching between environment-specific and player-centric cameras.
 
     public void SwitchEnvironmentScene(string currentEnvironmentSceneName, string targetSceneName)
     {

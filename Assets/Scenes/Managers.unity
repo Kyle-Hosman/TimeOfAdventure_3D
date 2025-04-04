@@ -654,7 +654,7 @@ MonoBehaviour:
   managersSceneName: Managers
   uiSceneName: UI
   playerSceneName: Player
-  environmentSceneName: Environment1
+  environmentSceneName: Environment2
 --- !u!1 &1968976426
 GameObject:
   m_ObjectHideFlags: 0
