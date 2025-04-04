@@ -10,8 +10,9 @@ public class SceneLoader : MonoBehaviour
     [SerializeField] private string playerSceneName = "Player";
     [SerializeField] private string environmentSceneName = "Environment1"; // Set this dynamically if needed
 
-    // Define the OnPlayerLoaded event
+    // Define the OnPlayerLoaded and OnAllScenesLoaded events
     public static event Action<GameObject> OnPlayerLoaded;
+    public static event Action OnAllScenesLoaded;
 
     private void Start()
     {
@@ -32,6 +33,9 @@ public class SceneLoader : MonoBehaviour
 
         // Finally, load the environment scene
         yield return LoadSceneAsync(environmentSceneName);
+
+        // Notify that all scenes are loaded
+        NotifyAllScenesLoaded();
     }
 
     private IEnumerator LoadSceneAsync(string sceneName)
@@ -61,6 +65,12 @@ public class SceneLoader : MonoBehaviour
         {
             Debug.LogWarning("Player GameObject not found in the loaded scene.");
         }
+    }
+
+    private void NotifyAllScenesLoaded()
+    {
+        Debug.Log("All scenes have been loaded.");
+        OnAllScenesLoaded?.Invoke();
     }
 
     public void TogglePlayerCamera(bool isActive)
