@@ -4551,7 +4551,7 @@ GameObject:
   - component: {fileID: 522811756}
   m_Layer: 0
   m_Name: Main Camera
-  m_TagString: MainCamera
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4703,7 +4703,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccd049ab7629d77498ca005815ba0514, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 6344631973851622823, guid: 11559ccdab8bcd84fa5710787629d3e7, type: 3}
 --- !u!4 &526737959
 Transform:
   m_ObjectHideFlags: 0
