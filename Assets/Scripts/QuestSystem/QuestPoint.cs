@@ -95,11 +95,36 @@ public class QuestPoint : MonoBehaviour
 
     private void QuestStateChange(Quest quest)
     {
+        if (quest == null)
+        {
+            Debug.LogError("Quest is null in QuestStateChange.");
+            return;
+        }
+
+        if (quest.info == null)
+        {
+            Debug.LogError($"Quest.info is null for quest: {quest}");
+            return;
+        }
+
+        if (quest.info.id == null)
+        {
+            Debug.LogError($"Quest.info.id is null for quest: {quest}");
+            return;
+        }
+
         // only update the quest state if this point has the corresponding quest
         if (quest.info.id.Equals(questId))
         {
             currentQuestState = quest.state;
-            questIcon.SetState(currentQuestState, startPoint, finishPoint);
+            if (questIcon != null)
+            {
+                questIcon.SetState(currentQuestState, startPoint, finishPoint);
+            }
+            else
+            {
+                Debug.LogWarning("QuestIcon is null in QuestStateChange.");
+            }
         }
     }
 
