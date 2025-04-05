@@ -10,8 +10,9 @@ public class SceneLoader : MonoBehaviour
     [SerializeField] private string playerSceneName = "Player";
     [SerializeField] private string environmentSceneName = "Environment1"; // Set this dynamically if needed
 
-    // Define the OnPlayerLoaded and OnAllScenesLoaded events
+    // Define events for when the Player scene and all scenes are loaded
     public static event Action<GameObject> OnPlayerLoaded;
+    public static event Action OnPlayerSceneLoaded;
     public static event Action OnAllScenesLoaded;
 
     private void Start()
@@ -29,7 +30,8 @@ public class SceneLoader : MonoBehaviour
 
         // Load Player scene
         yield return LoadSceneAsync(playerSceneName);
-        NotifyPlayerLoaded(); // Notify that the player has been loaded
+        NotifyPlayerSceneLoaded(); // Notify that the Player scene is loaded
+        NotifyPlayerLoaded();      // Notify that the player has been loaded
 
         // Finally, load the environment scene
         yield return LoadSceneAsync(environmentSceneName);
@@ -52,13 +54,19 @@ public class SceneLoader : MonoBehaviour
         }
     }
 
+    private void NotifyPlayerSceneLoaded()
+    {
+        Debug.Log("Player scene has been loaded.");
+        OnPlayerSceneLoaded?.Invoke();
+    }
+
     private void NotifyPlayerLoaded()
     {
         // Find the player GameObject in the loaded scene
         GameObject player = GameObject.FindWithTag("Player");
         if (player != null)
         {
-            // Trigger the OnPlayerLoaded event
+            Debug.Log("Player GameObject found and loaded.");
             OnPlayerLoaded?.Invoke(player);
         }
         else

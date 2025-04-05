@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: d289bdcaef9e23d4195cc69f1d939800
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 306213
+  packageName: 'POLYGRUNT - Low Poly Fantasy Swordsmen [3D Art]'
+  packageVersion: 1.0
+  assetPath: Assets/POLYGRUNT - Low Poly Fantasy Swordsmen [3D Art]/Materials/Color
+    - 05- Skin Tone - 04.mat
+  uploadId: 725395
