@@ -2,40 +2,43 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(CircleCollider2D))]
+[RequireComponent(typeof(BoxCollider))]
 public class Mushroom_Red : MonoBehaviour
 {
     [Header("Config")]
     [SerializeField] private float respawnTimeSeconds = 8;
     [SerializeField] private int mushroomsCollected = 1;
 
-    private CircleCollider2D circleCollider;
-    private SpriteRenderer visual;
+    private BoxCollider boxCollider;
+    private MeshRenderer visual;
 
     private void Awake() 
     {
-        circleCollider = GetComponent<CircleCollider2D>();
-        visual = GetComponentInChildren<SpriteRenderer>();
+        boxCollider = GetComponent<BoxCollider>();
+        visual = GetComponentInChildren<MeshRenderer>();
+
+        // Ensure the BoxCollider is set as a trigger
+        boxCollider.isTrigger = true;
     }
 
     public void CollectMushroom() 
     {
-        circleCollider.enabled = false;
+        boxCollider.enabled = false;
         visual.gameObject.SetActive(false);
         GameEventsManager.instance.mushroomEvents.MushroomChange(mushroomsCollected);
         GameEventsManager.instance.miscEvents.MushroomCollected();
-        StopAllCoroutines();
-        StartCoroutine(RespawnAfterTime());
+        //StopAllCoroutines();
+        //StartCoroutine(RespawnAfterTime());
     }
 
     private IEnumerator RespawnAfterTime()
     {
         yield return new WaitForSeconds(respawnTimeSeconds);
-        circleCollider.enabled = true;
+        boxCollider.enabled = true;
         visual.gameObject.SetActive(true);
     }
 
-    private void OnTriggerEnter2D(Collider2D otherCollider) 
+    private void OnTriggerEnter(Collider otherCollider) 
     {
         if (otherCollider.CompareTag("Player"))
         {

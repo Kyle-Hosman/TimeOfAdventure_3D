@@ -12,3 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b188fdbe554423240953b36cc1a8779e, type: 3}
   m_Name: InventorySO
   m_EditorClassIdentifier: 
+  inventoryItems:
+  - {fileID: 11400000, guid: 4935eb7120096114c872434b925a11e4, type: 2}
+  - {fileID: 11400000, guid: 4935eb7120096114c872434b925a11e4, type: 2}
+  - {fileID: 11400000, guid: 4935eb7120096114c872434b925a11e4, type: 2}
+  - {fileID: 11400000, guid: 4935eb7120096114c872434b925a11e4, type: 2}
+  - {fileID: 11400000, guid: 4935eb7120096114c872434b925a11e4, type: 2}
+  - {fileID: 11400000, guid: 4935eb7120096114c872434b925a11e4, type: 2}
+  - {fileID: 11400000, guid: 4935eb7120096114c872434b925a11e4, type: 2}
+  - {fileID: 11400000, guid: 4935eb7120096114c872434b925a11e4, type: 2}
+  - {fileID: 11400000, guid: 4935eb7120096114c872434b925a11e4, type: 2}

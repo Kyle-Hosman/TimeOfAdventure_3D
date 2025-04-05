@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 6461619794047877308}
   - component: {fileID: 9099733871406855286}
   - component: {fileID: 4320911679502529018}
-  - component: {fileID: 7022866073033206659}
+  - component: {fileID: 7442738629778313536}
+  - component: {fileID: 1729913884593396504}
   m_Layer: 0
   m_Name: prop_sword
   m_TagString: Untagged
@@ -109,7 +110,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.25789833, y: 1.1311368, z: 0.0852619}
   m_Center: {x: 0, y: 0.4065855, z: 0}
---- !u!114 &7022866073033206659
+--- !u!114 &7442738629778313536
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -118,8 +119,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 7298157750031488419}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e100c8af8870e2342a7e316b9b25914a, type: 3}
+  m_Script: {fileID: 11500000, guid: 9ecb4f1ea58d94e73933545d2eaf7aee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   respawnTimeSeconds: 8
-  goldGained: 1
+  mushroomsCollected: 1
+--- !u!114 &1729913884593396504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7298157750031488419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0325d1cf2ba182a47bfb222d9d350dcb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  item: {fileID: 11400000, guid: 4935eb7120096114c872434b925a11e4, type: 2}

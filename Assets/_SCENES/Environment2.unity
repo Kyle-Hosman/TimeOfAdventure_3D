@@ -2523,7 +2523,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7298157750031488419, guid: f8acc5915de8f2a4588e1a0440a3174b, type: 3}
       propertyPath: m_Name
-      value: prop_sword
+      value: Coin
       objectReference: {fileID: 0}
     - target: {fileID: 7927341822376169241, guid: f8acc5915de8f2a4588e1a0440a3174b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -13686,7 +13686,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7298157750031488419, guid: f8acc5915de8f2a4588e1a0440a3174b, type: 3}
       propertyPath: m_Name
-      value: prop_sword (1)
+      value: Coin (1)
       objectReference: {fileID: 0}
     - target: {fileID: 7927341822376169241, guid: f8acc5915de8f2a4588e1a0440a3174b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -19153,7 +19153,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7298157750031488419, guid: f8acc5915de8f2a4588e1a0440a3174b, type: 3}
       propertyPath: m_Name
-      value: prop_sword (2)
+      value: Coin (2)
       objectReference: {fileID: 0}
     - target: {fileID: 7927341822376169241, guid: f8acc5915de8f2a4588e1a0440a3174b, type: 3}
       propertyPath: m_LocalPosition.x

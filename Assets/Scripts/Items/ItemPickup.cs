@@ -3,16 +3,19 @@ using UnityEngine;
 public class ItemPickup : MonoBehaviour
 {
     public ItemSO item;
-    private CircleCollider2D circleCollider;
-    private SpriteRenderer visual;
+    private BoxCollider boxCollider;
+    private MeshRenderer visual;
 
     private void Awake() 
     {
-        circleCollider = GetComponent<CircleCollider2D>();
-        visual = GetComponentInChildren<SpriteRenderer>();
+        boxCollider = GetComponent<BoxCollider>();
+        visual = GetComponentInChildren<MeshRenderer>();
+
+        // Ensure the BoxCollider is set as a trigger
+        boxCollider.isTrigger = true;
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter(Collider other)
     {
         try
         {
@@ -42,10 +45,11 @@ public class ItemPickup : MonoBehaviour
                     return;
                 }
 
-                //Debug.Log("Calling ItemAdded event for item: " + item.itemName);
+                // Add the item to the inventory
                 GameEventsManager.instance.inventoryEvents.ItemAdded(item);
-                //Debug.Log("Picked up item: " + item.itemName);
+                Debug.Log("Picked up item: " + item.itemName);
 
+                // Destroy the item after pickup
                 Destroy(gameObject);
             }
             else
@@ -55,7 +59,7 @@ public class ItemPickup : MonoBehaviour
         }
         catch (System.Exception ex)
         {
-            Debug.LogError("Exception in OnTriggerEnter2D: " + ex.Message);
+            Debug.LogError("Exception in OnTriggerEnter: " + ex.Message);
             Debug.LogError("Stack Trace: " + ex.StackTrace);
         }
     }
