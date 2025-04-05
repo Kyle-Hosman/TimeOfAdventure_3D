@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMovementController : MonoBehaviour
 {
-    [Header("Config")]
+    /*[Header("Config")]
     [SerializeField] private float moveSpeed = 5f;
 
     private Rigidbody2D rb;
@@ -101,5 +101,5 @@ public class PlayerMovementController : MonoBehaviour
             visual.flipX = false;
         }
         
-    }
+    }*/
 }

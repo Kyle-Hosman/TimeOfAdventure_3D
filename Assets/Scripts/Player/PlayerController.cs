@@ -86,7 +86,7 @@ public class PlayerController : MonoBehaviour
 
             // Clamp the values to ensure they stay within the blend tree range
             scaledX = Mathf.Clamp(scaledX, -2f, 2f); // -2 to 2 for strafing
-            scaledZ = Mathf.Clamp(scaledZ, 0f, 2f);  // 0 to 2 for forward/backward movement
+            scaledZ = Mathf.Clamp(scaledZ, -2f, 2f);  // 0 to 2 for forward/backward movement
 
             // Set the Velocity X and Velocity Z parameters in the Animator
             animator.SetFloat("Velocity X", scaledX); // Sideways movement

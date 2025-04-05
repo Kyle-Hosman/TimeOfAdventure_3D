@@ -28,6 +28,8 @@ public class SceneLoader : MonoBehaviour
         // Load UI scene
         yield return LoadSceneAsync(uiSceneName);
 
+        // Wait a frame to ensure the player scene is fully initialized
+        yield return null;
         // Load Player scene
         yield return LoadSceneAsync(playerSceneName);
         NotifyPlayerSceneLoaded(); // Notify that the Player scene is loaded
