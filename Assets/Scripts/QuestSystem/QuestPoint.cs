@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(CircleCollider2D))]
+[RequireComponent(typeof(BoxCollider))]
 public class QuestPoint : MonoBehaviour
 {
     [Header("Dialogue (optional)")]
@@ -25,6 +25,10 @@ public class QuestPoint : MonoBehaviour
     {
         questId = questInfoForPoint.id;
         questIcon = GetComponentInChildren<QuestIcon>();
+
+        // Ensure the BoxCollider is set as a trigger
+        BoxCollider collider = GetComponent<BoxCollider>();
+        collider.isTrigger = true;
     }
 
     private void OnEnable()
@@ -63,13 +67,14 @@ public class QuestPoint : MonoBehaviour
 
     private void SubmitPressed(InputEventContext inputEventContext)
     {
+        Debug.Log("SubmitPressed called on QuestPoint: " + gameObject.name + ", playerIsNear: " + playerIsNear + ", inputEventContext: " + inputEventContext);
         if (!playerIsNear || !inputEventContext.Equals(InputEventContext.DEFAULT))
         {
             return;
         }
 
         // if we have a knot name defined, try to start dialogue with it
-        if (!dialogueKnotName.Equals("")) 
+        if (!string.IsNullOrEmpty(dialogueKnotName)) 
         {
             GameEventsManager.instance.dialogueEvents.EnterDialogue(dialogueKnotName);
         }
@@ -98,17 +103,18 @@ public class QuestPoint : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D otherCollider)
+    private void OnTriggerEnter(Collider other)
     {
-        if (otherCollider.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
+            //Debug.Log("Player entered QuestPoint trigger: " + gameObject.name);
             playerIsNear = true;
         }
     }
 
-    private void OnTriggerExit2D(Collider2D otherCollider)
+    private void OnTriggerExit(Collider other)
     {
-        if (otherCollider.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
             playerIsNear = false;
         }

@@ -6,15 +6,40 @@ public class PlayerController : MonoBehaviour
     public CharacterController characterController; // Reference to the CharacterController component
     public float walkSpeed = 0.5f; // Speed of the player
     public float runSpeed = 2f; // Speed of the player when running
-    public float jumpSpeed = 8f; // Speed of the player when jumping
-    public float gravity = 50f; // Increased gravity for stronger effect
+    public float jumpSpeed = 10f; // Speed of the player when jumping
+    public float gravity = 20f; // Gravity applied to the player
 
-    Vector3 moveDirection = Vector3.zero; // Direction of the player's movement
-    public bool canMove = true; // Flag to check if the player can move
+    private Vector3 moveDirection = Vector3.zero; // Direction of the player's movement
+    private Vector3 inputDirection = Vector3.zero; // Input direction from InputEvents
+    private bool movementDisabled = false; // Flag to check if movement is disabled
+    private bool isRunning = false; // Whether the player is running
+    private bool jumpRequested = false; // Whether a jump has been requested
     private CharacterController controller; // Reference to the CharacterController component
     private Animator animator; // Reference to the Animator component
 
-    void Start()
+    private void OnEnable()
+    {
+        // Subscribe to InputEvents
+        GameEventsManager.instance.inputEvents.onMovePressed += OnMovePressed;
+        GameEventsManager.instance.inputEvents.onJumpPressed += OnJumpPressed;
+
+        // Subscribe to PlayerEvents
+        GameEventsManager.instance.playerEvents.onDisablePlayerMovement += DisablePlayerMovement;
+        GameEventsManager.instance.playerEvents.onEnablePlayerMovement += EnablePlayerMovement;
+    }
+
+    private void OnDisable()
+    {
+        // Unsubscribe from InputEvents
+        GameEventsManager.instance.inputEvents.onMovePressed -= OnMovePressed;
+        GameEventsManager.instance.inputEvents.onJumpPressed -= OnJumpPressed;
+
+        // Unsubscribe from PlayerEvents
+        GameEventsManager.instance.playerEvents.onDisablePlayerMovement -= DisablePlayerMovement;
+        GameEventsManager.instance.playerEvents.onEnablePlayerMovement -= EnablePlayerMovement;
+    }
+
+    private void Start()
     {
         // Assign the CharacterController and Animator components
         controller = GetComponent<CharacterController>();
@@ -25,10 +50,12 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
-    void Update()
+    private void Update()
     {
-        // Get the forward and right directions from the camera
-        Transform cameraTransform = Camera.main.transform; // Assumes the main camera is tagged as "MainCamera"
+        if (movementDisabled) return; // Prevent movement if disabled
+
+        // Calculate movement direction based on input and camera direction
+        Transform cameraTransform = Camera.main.transform;
         Vector3 cameraForward = cameraTransform.forward;
         Vector3 cameraRight = cameraTransform.right;
 
@@ -38,34 +65,31 @@ public class PlayerController : MonoBehaviour
         cameraForward.Normalize();
         cameraRight.Normalize();
 
-        // Press Left Shift to run
-        bool isRunning = Input.GetKey(KeyCode.LeftShift); // Check if the Left Shift key is pressed
-        float speed = isRunning ? runSpeed : walkSpeed; // Use runSpeed if running, otherwise walkSpeed
-
-        // Calculate movement direction based on input and camera direction
-        float inputVertical = Input.GetAxis("Vertical"); // Forward/backward input
-        float inputHorizontal = Input.GetAxis("Horizontal"); // Left/right input
-        Vector3 desiredMoveDirection = (cameraForward * inputVertical + cameraRight * inputHorizontal).normalized;
+        // Calculate desired movement direction
+        Vector3 desiredMoveDirection = (cameraForward * inputDirection.z + cameraRight * inputDirection.x).normalized;
 
         // Apply movement if the player can move
-        if (canMove)
-        {
-            moveDirection.x = desiredMoveDirection.x * speed;
-            moveDirection.z = desiredMoveDirection.z * speed;
-            // Preserve moveDirection.y for gravity or jumping
-        }
+        float speed = isRunning ? runSpeed : walkSpeed;
+        moveDirection.x = desiredMoveDirection.x * speed;
+        moveDirection.z = desiredMoveDirection.z * speed;
 
-        // Apply gravity
+        // Handle jumping and gravity
         if (controller.isGrounded)
         {
-            if (Input.GetButton("Jump") && canMove)
+            if (jumpRequested)
             {
-                moveDirection.y = jumpSpeed; // Set the Y direction of the movement to the jump speed
+                moveDirection.y = jumpSpeed; // Apply jump speed
+                jumpRequested = false; // Reset jump request
+                Debug.Log($"Jump applied! moveDirection.y = {moveDirection.y}"); // Debug log
             }
             else
             {
                 moveDirection.y = 0; // Reset Y direction when grounded
             }
+        }
+        else
+        {
+            moveDirection.y -= gravity * Time.deltaTime; // Apply gravity
         }
 
         // Move the character controller
@@ -82,12 +106,40 @@ public class PlayerController : MonoBehaviour
         UpdateAnimator();
     }
 
-    void FixedUpdate()
+    private void OnMovePressed(Vector3 direction)
     {
-        if (!controller.isGrounded)
+        if (movementDisabled)
         {
-            moveDirection.y -= gravity * Time.fixedDeltaTime; // Apply gravity in FixedUpdate
+            inputDirection = Vector3.zero; // Prevent movement if disabled
         }
+        else
+        {
+            inputDirection = direction;
+            isRunning = Input.GetKey(KeyCode.LeftShift); // Check if the Left Shift key is pressed
+        }
+    }
+
+    private void OnJumpPressed()
+    {
+        if (controller.isGrounded && !movementDisabled)
+        {
+            jumpRequested = true; // Set jump request
+            Debug.Log("Jump requested!"); // Debug log for jump request
+        }
+    }
+
+    private void DisablePlayerMovement()
+    {
+        movementDisabled = true;
+        inputDirection = Vector3.zero; // Stop movement immediately
+        moveDirection = Vector3.zero; // Reset move direction
+        Debug.Log("Player movement disabled.");
+    }
+
+    private void EnablePlayerMovement()
+    {
+        movementDisabled = false;
+        Debug.Log("Player movement enabled.");
     }
 
     private void UpdateAnimator()

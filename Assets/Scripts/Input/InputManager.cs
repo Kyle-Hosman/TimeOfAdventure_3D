@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 // This script acts as a proxy for the PlayerInput component
-// such that the input events the game needs to proces will 
+// such that the input events the game needs to process will 
 // be sent through the GameEventManager. This lets any other
 // script in the project easily subscribe to an input action
 // without having to deal with the PlayerInput component directly.
@@ -14,8 +14,18 @@ public class InputManager : MonoBehaviour
     {
         if (context.performed || context.canceled)
         {
-            Vector2 direction = context.ReadValue<Vector2>();
-            GameEventsManager.instance.inputEvents.MovePressed(direction);
+            Vector2 inputDirection = context.ReadValue<Vector2>();
+            Vector3 movementDirection = new Vector3(inputDirection.x, 0, inputDirection.y); // Map 2D input to 3D space
+            GameEventsManager.instance.inputEvents.MovePressed(movementDirection);
+        }
+    }
+
+    public void LookPressed(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            Vector2 lookInput = context.ReadValue<Vector2>();
+            GameEventsManager.instance.inputEvents.LookPressed(lookInput);
         }
     }
 
@@ -57,6 +67,22 @@ public class InputManager : MonoBehaviour
         if (context.started)
         {
             GameEventsManager.instance.inputEvents.SelectInventoryItem();
+        }
+    }
+
+    public void JumpPressed(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            GameEventsManager.instance.inputEvents.JumpPressed();
+        }
+    }
+
+    public void InteractPressed(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            GameEventsManager.instance.inputEvents.InteractPressed();
         }
     }
 }
