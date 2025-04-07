@@ -5,7 +5,7 @@ public class ItemSO : ScriptableObject
 {
     [field: SerializeField] public string id { get; private set; }
     public string itemName;
-    public Sprite itemIcon; // Ensure this property exists
+    //public Sprite itemIcon; // Ensure this property exists
     public enum StatToChange { Health, Mana, Stamina, Strength, Agility, Intelligence, Defense }
     public StatToChange statToChange;
     public int statChangeAmount;

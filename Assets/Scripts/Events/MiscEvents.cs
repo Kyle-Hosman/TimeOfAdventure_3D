@@ -29,4 +29,13 @@ public class MiscEvents
             onMushroomCollected();
         }
     }
+
+    public event Action onHealthPotionCollected;
+    public void HealthPotionCollected()
+    {
+        if (onMushroomCollected != null)
+        {
+            onMushroomCollected();
+        }
+    }
 }

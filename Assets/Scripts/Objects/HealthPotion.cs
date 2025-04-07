@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider))]
-public class Mushrom_Red : MonoBehaviour
+public class HealthPotion : MonoBehaviour
 {
     [Header("Config")]
     [SerializeField] private float respawnTimeSeconds = 8;
@@ -21,12 +21,12 @@ public class Mushrom_Red : MonoBehaviour
         boxCollider.isTrigger = true;
     }
 
-    public void CollectMushroom() 
+    public void CollectItem() 
     {
         boxCollider.enabled = false;
         visual.gameObject.SetActive(false);
-        GameEventsManager.instance.mushroomEvents.MushroomChange(mushroomsCollected);
-        GameEventsManager.instance.miscEvents.MushroomCollected();
+        //GameEventsManager.instance.mushroomEvents.MushroomChange(mushroomsCollected);
+        GameEventsManager.instance.miscEvents.HealthPotionCollected();
         //StopAllCoroutines();
         //StartCoroutine(RespawnAfterTime());
     }
@@ -42,7 +42,7 @@ public class Mushrom_Red : MonoBehaviour
     {
         if (otherCollider.CompareTag("Player"))
         {
-            CollectMushroom();
+            CollectItem();
         }
     }
 }
