@@ -1,4 +1,5 @@
 using UnityEngine;
+using Unity.Cinemachine;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
@@ -16,6 +17,7 @@ public class PlayerController : MonoBehaviour
     private bool jumpRequested = false; // Whether a jump has been requested
     private CharacterController controller; // Reference to the CharacterController component
     private Animator animator; // Reference to the Animator component
+    [SerializeField] private CinemachineCamera cinemachineCamera;
 
     private void OnEnable()
     {
@@ -53,6 +55,13 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         if (movementDisabled) return; // Prevent movement if disabled
+
+        // Disable camera control if the InputEventContext is INVENTORY or DIALOGUE
+        if (GameEventsManager.instance.inputEvents.inputEventContext == InputEventContext.INVENTORY ||
+            GameEventsManager.instance.inputEvents.inputEventContext == InputEventContext.DIALOGUE)
+        {
+            return; // Skip the rest of the Update logic, including camera movement
+        }
 
         // Calculate movement direction based on input and camera direction
         Transform cameraTransform = Camera.main.transform;
@@ -133,12 +142,18 @@ public class PlayerController : MonoBehaviour
         movementDisabled = true;
         inputDirection = Vector3.zero; // Stop movement immediately
         moveDirection = Vector3.zero; // Reset move direction
+                                      // Override Cinemachine input axes
+        //CinemachineCore.GetInputAxis = (axisName) => 0;
+        cinemachineCamera.gameObject.SetActive(false);
         Debug.Log("Player movement disabled.");
     }
 
     private void EnablePlayerMovement()
     {
         movementDisabled = false;
+        // Restore Cinemachine input axes
+        //CinemachineCore.GetInputAxis = UnityEngine.Input.GetAxis;
+        cinemachineCamera.gameObject.SetActive(true);
         Debug.Log("Player movement enabled.");
     }
 

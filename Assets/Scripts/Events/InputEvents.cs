@@ -7,6 +7,7 @@ public class InputEvents
 
     public void ChangeInputEventContext(InputEventContext newContext) 
     {
+        Debug.Log($"Changing InputEventContext from {inputEventContext} to {newContext}");
         this.inputEventContext = newContext;
     }
 

@@ -67,7 +67,7 @@ public class QuestPoint : MonoBehaviour
 
     private void SubmitPressed(InputEventContext inputEventContext)
     {
-        Debug.Log("SubmitPressed called on QuestPoint: " + gameObject.name + ", playerIsNear: " + playerIsNear + ", inputEventContext: " + inputEventContext);
+        //Debug.Log("SubmitPressed called on QuestPoint: " + gameObject.name + ", playerIsNear: " + playerIsNear + ", inputEventContext: " + inputEventContext);
         if (!playerIsNear || !inputEventContext.Equals(InputEventContext.DEFAULT))
         {
             return;

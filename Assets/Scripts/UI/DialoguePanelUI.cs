@@ -34,11 +34,17 @@ public class DialoguePanelUI : MonoBehaviour
     private void DialogueStarted()
     {
         contentParent.SetActive(true);
+        // Unhide the mouse and unlock the cursor
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     private void DialogueFinished()
     {
         contentParent.SetActive(false);
+        // Hide the mouse and lock the cursor
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
 
         // reset anything for next time
         ResetPanel();

@@ -41,10 +41,22 @@ public class InventoryUI : MonoBehaviour
         if (contentParent.activeInHierarchy)
         {
             HideUI();
+            // Revert InputEventContext to DEFAULT
+            GameEventsManager.instance.inputEvents.ChangeInputEventContext(InputEventContext.DEFAULT);
+
+            // Hide the mouse and lock the cursor
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
         }
         else
         {
             ShowUI();
+            // Set InputEventContext to INVENTORY
+            GameEventsManager.instance.inputEvents.ChangeInputEventContext(InputEventContext.INVENTORY);
+
+            // Unhide the mouse and unlock the cursor
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
         }
     }
 

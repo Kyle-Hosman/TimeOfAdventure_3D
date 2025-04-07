@@ -2411,11 +2411,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 789030871b27b274ba3ae5b4e1696fd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterController: {fileID: 0}
+  characterController: {fileID: 6309056000254699366}
   walkSpeed: 5
   runSpeed: 10
   jumpSpeed: 15
   gravity: 20
+  cinemachineCamera: {fileID: 869332691}
 --- !u!143 &6309056000254699366
 CharacterController:
   m_ObjectHideFlags: 0
