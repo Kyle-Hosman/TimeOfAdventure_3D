@@ -100,4 +100,22 @@ public class InputEvents
             onInteractPressed();
         }
     }
+
+    public event Action onSprintPressed;
+    public void SprintPressed()
+    {
+        if (onSprintPressed != null)
+        {
+            onSprintPressed();
+        }
+    }
+
+    public event Action onSprintReleased;
+    public void SprintReleased()
+    {
+        if (onSprintReleased != null)
+        {
+            onSprintReleased();
+        }
+    }
 }

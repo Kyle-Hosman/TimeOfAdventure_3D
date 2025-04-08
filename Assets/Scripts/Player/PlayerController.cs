@@ -24,6 +24,8 @@ public class PlayerController : MonoBehaviour
         // Subscribe to InputEvents
         GameEventsManager.instance.inputEvents.onMovePressed += OnMovePressed;
         GameEventsManager.instance.inputEvents.onJumpPressed += OnJumpPressed;
+        GameEventsManager.instance.inputEvents.onSprintPressed += OnSprintPressed;
+        GameEventsManager.instance.inputEvents.onSprintReleased += OnSprintReleased;
 
         // Subscribe to PlayerEvents
         GameEventsManager.instance.playerEvents.onDisablePlayerMovement += DisablePlayerMovement;
@@ -35,6 +37,8 @@ public class PlayerController : MonoBehaviour
         // Unsubscribe from InputEvents
         GameEventsManager.instance.inputEvents.onMovePressed -= OnMovePressed;
         GameEventsManager.instance.inputEvents.onJumpPressed -= OnJumpPressed;
+        GameEventsManager.instance.inputEvents.onSprintPressed -= OnSprintPressed;
+        GameEventsManager.instance.inputEvents.onSprintReleased -= OnSprintReleased;
 
         // Unsubscribe from PlayerEvents
         GameEventsManager.instance.playerEvents.onDisablePlayerMovement -= DisablePlayerMovement;
@@ -79,6 +83,7 @@ public class PlayerController : MonoBehaviour
 
         // Apply movement if the player can move
         float speed = isRunning ? runSpeed : walkSpeed;
+        //Debug.Log($"Update: isRunning = {isRunning}, speed = {speed}");
         moveDirection.x = desiredMoveDirection.x * speed;
         moveDirection.z = desiredMoveDirection.z * speed;
 
@@ -88,13 +93,15 @@ public class PlayerController : MonoBehaviour
             if (jumpRequested)
             {
                 moveDirection.y = jumpSpeed; // Apply jump speed
-                jumpRequested = false; // Reset jump request
                 Debug.Log($"Jump applied! moveDirection.y = {moveDirection.y}"); // Debug log
             }
             else
             {
                 moveDirection.y = 0; // Reset Y direction when grounded
             }
+
+            // Reset jumpRequested only after processing the jump
+            jumpRequested = false;
         }
         else
         {
@@ -124,7 +131,6 @@ public class PlayerController : MonoBehaviour
         else
         {
             inputDirection = direction;
-            isRunning = Input.GetKey(KeyCode.LeftShift); // Check if the Left Shift key is pressed
         }
     }
 
@@ -137,13 +143,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    
+
     private void DisablePlayerMovement()
     {
         movementDisabled = true;
         inputDirection = Vector3.zero; // Stop movement immediately
         moveDirection = Vector3.zero; // Reset move direction
-                                      // Override Cinemachine input axes
-        //CinemachineCore.GetInputAxis = (axisName) => 0;
         cinemachineCamera.gameObject.SetActive(false);
         Debug.Log("Player movement disabled.");
     }
@@ -151,34 +157,44 @@ public class PlayerController : MonoBehaviour
     private void EnablePlayerMovement()
     {
         movementDisabled = false;
-        // Restore Cinemachine input axes
-        //CinemachineCore.GetInputAxis = UnityEngine.Input.GetAxis;
         cinemachineCamera.gameObject.SetActive(true);
         Debug.Log("Player movement enabled.");
     }
 
-    private void UpdateAnimator()
-{
-    if (animator != null)
+    private void OnSprintPressed()
     {
-        // Calculate the player's local movement direction
-        Vector3 localVelocity = transform.InverseTransformDirection(controller.velocity);
-
-        // Scale the velocity to match the blend tree values
-        float scaleFactor = 2f / runSpeed; // 2 corresponds to running in the blend tree
-        float scaledX = localVelocity.x * scaleFactor;
-        float scaledZ = localVelocity.z * scaleFactor;
-
-        // Clamp the values to ensure they stay within the blend tree range
-        scaledX = Mathf.Clamp(scaledX, -2f, 2f); // -2 to 2 for strafing
-        scaledZ = Mathf.Clamp(scaledZ, -2f, 2f);  // 0 to 2 for forward/backward movement
-
-        // Set the Velocity X and Velocity Z parameters in the Animator
-        animator.SetFloat("Velocity X", scaledX); // Sideways movement
-        animator.SetFloat("Velocity Z", scaledZ); // Forward/backward movement
-
-        // Set the VerticalVelocity parameter for jumping
-        animator.SetFloat("Vertical Velocity", moveDirection.y);
+        isRunning = true;
+        Debug.Log($"Sprint started. isRunning = {isRunning}");
     }
-}
+
+    private void OnSprintReleased()
+    {
+        isRunning = false;
+        Debug.Log($"Sprint stopped. isRunning = {isRunning}");
+    }
+
+    private void UpdateAnimator()
+    {
+        if (animator != null)
+        {
+            // Calculate the player's local movement direction
+            Vector3 localVelocity = transform.InverseTransformDirection(controller.velocity);
+
+            // Scale the velocity to match the blend tree values
+            float scaleFactor = 2f / runSpeed; // 2 corresponds to running in the blend tree
+            float scaledX = localVelocity.x * scaleFactor;
+            float scaledZ = localVelocity.z * scaleFactor;
+
+            // Clamp the values to ensure they stay within the blend tree range
+            scaledX = Mathf.Clamp(scaledX, -2f, 2f); // -2 to 2 for strafing
+            scaledZ = Mathf.Clamp(scaledZ, -2f, 2f);  // 0 to 2 for forward/backward movement
+
+            // Set the Velocity X and Velocity Z parameters in the Animator
+            animator.SetFloat("Velocity X", scaledX); // Sideways movement
+            animator.SetFloat("Velocity Z", scaledZ); // Forward/backward movement
+
+            // Set the VerticalVelocity parameter for jumping
+            animator.SetFloat("Vertical Velocity", moveDirection.y);
+        }
+    }
 }

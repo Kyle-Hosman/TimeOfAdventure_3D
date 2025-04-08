@@ -85,4 +85,16 @@ public class InputManager : MonoBehaviour
             GameEventsManager.instance.inputEvents.InteractPressed();
         }
     }
+
+    public void SprintPressed(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            GameEventsManager.instance.inputEvents.SprintPressed();
+        }
+        else if (context.canceled)
+        {
+            GameEventsManager.instance.inputEvents.SprintReleased();
+        }
+    }
 }
