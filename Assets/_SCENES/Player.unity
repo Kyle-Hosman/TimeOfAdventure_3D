@@ -2412,10 +2412,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterController: {fileID: 6309056000254699366}
-  walkSpeed: 5
-  runSpeed: 10
-  jumpSpeed: 15
-  gravity: 20
+  walkSpeed: 4
+  runSpeed: 8
+  jumpSpeed: 10
+  gravity: 10
   cinemachineCamera: {fileID: 869332691}
 --- !u!143 &6309056000254699366
 CharacterController:

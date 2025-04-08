@@ -19,6 +19,9 @@ public class PlayerController : MonoBehaviour
     private Animator animator; // Reference to the Animator component
     [SerializeField] private CinemachineCamera cinemachineCamera;
 
+    private float smoothedVerticalVelocity = 0f; // Store the smoothed vertical velocity
+    private float smoothingTime = 0.1f; // Adjust this value for smoother transitions
+
     private void OnEnable()
     {
         // Subscribe to InputEvents
@@ -115,7 +118,8 @@ public class PlayerController : MonoBehaviour
         if (desiredMoveDirection.magnitude > 0)
         {
             Quaternion targetRotation = Quaternion.LookRotation(desiredMoveDirection);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f); // Smooth rotation
+            float rotationSpeed = 4f; // Adjust this value to control the smoothness
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
         }
 
         // Update the Animator parameters
@@ -139,7 +143,6 @@ public class PlayerController : MonoBehaviour
         if (controller.isGrounded && !movementDisabled)
         {
             jumpRequested = true; // Set jump request
-            Debug.Log("Jump requested!"); // Debug log for jump request
         }
     }
 
@@ -158,19 +161,16 @@ public class PlayerController : MonoBehaviour
     {
         movementDisabled = false;
         cinemachineCamera.gameObject.SetActive(true);
-        Debug.Log("Player movement enabled.");
     }
 
     private void OnSprintPressed()
     {
         isRunning = true;
-        Debug.Log($"Sprint started. isRunning = {isRunning}");
     }
 
     private void OnSprintReleased()
     {
         isRunning = false;
-        Debug.Log($"Sprint stopped. isRunning = {isRunning}");
     }
 
     private void UpdateAnimator()
@@ -189,12 +189,25 @@ public class PlayerController : MonoBehaviour
             scaledX = Mathf.Clamp(scaledX, -2f, 2f); // -2 to 2 for strafing
             scaledZ = Mathf.Clamp(scaledZ, -2f, 2f);  // 0 to 2 for forward/backward movement
 
-            // Set the Velocity X and Velocity Z parameters in the Animator
+            // Smooth the vertical velocity
+            smoothedVerticalVelocity = Mathf.Lerp(smoothedVerticalVelocity, moveDirection.y, Time.deltaTime / smoothingTime);
+
+            // Calculate VelocityDirection based on Vertical Velocity
+            float velocityDirection = 0f;
+            if (moveDirection.y >= 2f || moveDirection.y <= -2f)
+            {
+                velocityDirection = 1f; // Jumping
+            }
+            else if (moveDirection.y <= -2f)
+            {
+                velocityDirection = 0f; // Not Jumping
+            }
+
+            // Set the Animator parameters
             animator.SetFloat("Velocity X", scaledX); // Sideways movement
             animator.SetFloat("Velocity Z", scaledZ); // Forward/backward movement
-
-            // Set the VerticalVelocity parameter for jumping
-            animator.SetFloat("Vertical Velocity", moveDirection.y);
+            animator.SetFloat("Vertical Velocity", smoothedVerticalVelocity); // Smoothed vertical velocity
+            animator.SetFloat("VelocityDirection", velocityDirection); // Air speed for jumping
         }
     }
 }
