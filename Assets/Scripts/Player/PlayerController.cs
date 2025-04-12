@@ -22,6 +22,14 @@ public class PlayerController : MonoBehaviour
     private float smoothedVerticalVelocity = 0f; // Store the smoothed vertical velocity
     private float smoothingTime = 0.1f; // Adjust this value for smoother transitions
 
+    [Header("Attack Settings")]
+    [SerializeField] private GameObject swordPrefab; // Reference to the sword prefab
+    [SerializeField] private Transform swordHolder; // Reference to the sword holder (player's hand)
+    [SerializeField] private float attackCooldown = 1f; // Cooldown time between attacks
+
+    private bool isAttacking = false; // Whether the player is currently attacking
+    private float lastAttackTime = 0f; // Time of the last attack
+
     private void OnEnable()
     {
         // Subscribe to InputEvents
@@ -57,6 +65,12 @@ public class PlayerController : MonoBehaviour
         // Hide and lock the cursor
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+
+        // Instantiate the sword and attach it to the sword holder
+        if (swordPrefab != null && swordHolder != null)
+        {
+            Instantiate(swordPrefab, swordHolder);
+        }
     }
 
     private void Update()
@@ -124,6 +138,12 @@ public class PlayerController : MonoBehaviour
 
         // Update the Animator parameters
         UpdateAnimator();
+
+        // Handle attack input
+        if (Input.GetMouseButtonDown(0) && !isAttacking && Time.time >= lastAttackTime + attackCooldown)
+        {
+            Attack();
+        }
     }
 
     private void OnMovePressed(Vector3 direction)
@@ -145,8 +165,6 @@ public class PlayerController : MonoBehaviour
             jumpRequested = true; // Set jump request
         }
     }
-
-    
 
     private void DisablePlayerMovement()
     {
@@ -208,6 +226,50 @@ public class PlayerController : MonoBehaviour
             animator.SetFloat("Velocity Z", scaledZ); // Forward/backward movement
             animator.SetFloat("Vertical Velocity", smoothedVerticalVelocity); // Smoothed vertical velocity
             animator.SetFloat("VelocityDirection", velocityDirection); // Air speed for jumping
+        }
+    }
+
+    private void Attack()
+    {
+        isAttacking = true;
+        lastAttackTime = Time.time;
+
+        // Trigger the attack animation
+        if (animator != null)
+        {
+            animator.SetTrigger("Attack");
+        }
+
+        // Enable the sword collider (if applicable)
+        EnableSwordCollider();
+
+        // Reset the attack state after the animation ends
+        Invoke(nameof(ResetAttack), attackCooldown);
+    }
+
+    private void ResetAttack()
+    {
+        isAttacking = false;
+
+        // Disable the sword collider (if applicable)
+        DisableSwordCollider();
+    }
+
+    private void EnableSwordCollider()
+    {
+        Collider swordCollider = swordHolder.GetComponentInChildren<Collider>();
+        if (swordCollider != null)
+        {
+            swordCollider.enabled = true;
+        }
+    }
+
+    private void DisableSwordCollider()
+    {
+        Collider swordCollider = swordHolder.GetComponentInChildren<Collider>();
+        if (swordCollider != null)
+        {
+            swordCollider.enabled = false;
         }
     }
 }
