@@ -73,36 +73,24 @@ public class PlayerController : MonoBehaviour
         // Get input direction
         float inputX = Input.GetAxis("Horizontal");
         float inputZ = Input.GetAxis("Vertical");
-        Vector3 inputDirection = new Vector3(inputX, 0, inputZ).normalized;
+        inputDirection = new Vector3(inputX, 0, inputZ).normalized;
 
-        // Get the camera's forward direction
+        // Get the camera's forward and right directions
         Transform cameraTransform = Camera.main.transform;
         Vector3 cameraForward = Vector3.Scale(cameraTransform.forward, new Vector3(1, 0, 1)).normalized;
         Vector3 cameraRight = cameraTransform.right;
 
-        // Adjust movement direction based on input
-        Vector3 moveDirection;
-        if (inputZ > 0) // Moving forward
-        {
-            moveDirection = (cameraForward * inputZ + cameraRight * inputX).normalized;
-        }
-        else // Moving sideways or backward
-        {
-            moveDirection = transform.TransformDirection(inputDirection); // Use character's local direction
-        }
-
-        // Ensure the camera stays behind the character
-        Camera.main.transform.position = transform.position - transform.forward * 5f + Vector3.up * 2f; // Adjust offset as needed
-        Camera.main.transform.rotation = Quaternion.LookRotation(transform.forward);
+        // Calculate movement direction relative to the camera
+        moveDirection = (cameraForward * inputZ + cameraRight * inputX).normalized;
 
         // Adjust movement speed based on sprinting
         float currentSpeed = isSprinting ? runSpeed : walkSpeed;
         moveDirection *= isGrounded ? currentSpeed : currentSpeed * airControl;
 
-        // Rotate the player to face the movement direction
-        if (inputDirection.magnitude > 0)
+        // Rotate the player to face the camera's forward direction only when moving forward/backward
+        if (inputZ != 0)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+            Quaternion targetRotation = Quaternion.LookRotation(cameraForward);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
         }
 
@@ -206,11 +194,38 @@ public class PlayerController : MonoBehaviour
 
             // Update movement parameters
             Vector3 localVelocity = transform.InverseTransformDirection(controller.velocity);
-            animator.SetFloat("Velocity X", localVelocity.x);
 
-            // Normalize Velocity Z for walking and running
-            float normalizedVelocityZ = Mathf.Clamp(localVelocity.z / runSpeed, 0f, 1f);
+            // Determine the correct max speed based on whether the player is sprinting
+            float maxSpeed = isSprinting ? runSpeed : walkSpeed;
+
+            // Normalize Velocity X and Z based on the current speed (walk or run)
+            float normalizedVelocityX = Mathf.Clamp(localVelocity.x / runSpeed, -1f, 1f); // Always normalize to runSpeed for blend tree
+            float normalizedVelocityZ = Mathf.Clamp(localVelocity.z / runSpeed, -1f, 1f); // Always normalize to runSpeed for blend tree
+
+            // Scale the values for walking if not sprinting
+            if (!isSprinting)
+            {
+                normalizedVelocityX *= walkSpeed / runSpeed; // Scale down to walking range
+                normalizedVelocityZ *= walkSpeed / runSpeed; // Scale down to walking range
+            }
+
+            // Set the animator parameters
+            animator.SetFloat("Velocity X", normalizedVelocityX);
             animator.SetFloat("Velocity Z", normalizedVelocityZ);
+
+            // Adjust animation speed based on state
+            if (animator.GetBool("IsJumping"))
+            {
+                animator.speed = 0.8f; // Slow down the jump animation
+            }
+            else if (isSprinting)
+            {
+                animator.speed = Mathf.Clamp(localVelocity.magnitude / runSpeed, 1.2f, 1.5f); // Slightly adjust for running
+            }
+            else
+            {
+                animator.speed = Mathf.Clamp(localVelocity.magnitude / walkSpeed, 0.8f, 1.2f); // Slightly adjust for walking
+            }
         }
     }
 
