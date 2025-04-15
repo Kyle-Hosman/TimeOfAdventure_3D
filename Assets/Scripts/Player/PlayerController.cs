@@ -136,14 +136,15 @@ public class PlayerController : MonoBehaviour
             if (isSprinting)
             {
                 animator.SetTrigger("Running_Jump"); // Trigger running jump animation
+                Debug.Log("Running_Jump animation triggered.");
             }
             else
             {
                 animator.SetTrigger("Jump"); // Trigger regular jump animation
+                Debug.Log("Jump animation triggered.");
             }
 
             velocity.y = 0.1f;
-            Debug.Log("Jump animation triggered.");
         }
 
         // Reset jump request after landing
@@ -151,6 +152,10 @@ public class PlayerController : MonoBehaviour
         {
             jumpRequested = false;
             jumpForceApplied = false; // Reset the flag
+
+            // Reset triggers to avoid being stuck
+            animator.ResetTrigger("Running_Jump");
+            animator.ResetTrigger("Jump");
         }
     }
 
@@ -180,9 +185,9 @@ public class PlayerController : MonoBehaviour
         // Prevent snapping to the ground immediately after jumping
         float checkDistance = isGrounded ? groundCheckDistance : 0.2f; // Increased distance for better detection
 
-        // Calculate capsule positions
-        Vector3 capsuleBottom = transform.position + controller.center - Vector3.up * (controller.height / 2f - controller.radius);
-        Vector3 capsuleTop = transform.position + controller.center + Vector3.up * (controller.height / 2f - controller.radius);
+        // Calculate capsule positions based on the updated collider size
+        Vector3 capsuleBottom = transform.position + controller.center - Vector3.up * (controller.height / 2f - controller.radius * 0.9f); // Adjusted for larger character
+        Vector3 capsuleTop = transform.position + controller.center + Vector3.up * (controller.height / 2f - controller.radius * 0.9f); // Adjusted for larger character
 
         // Perform a capsule cast to check for ground
         isGrounded = Physics.CapsuleCast(capsuleBottom, capsuleTop, controller.radius, Vector3.down, out RaycastHit hit, checkDistance, groundLayer);
