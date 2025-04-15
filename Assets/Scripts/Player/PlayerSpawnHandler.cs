@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerSpawnHandler : MonoBehaviour
 {
-    private void OnEnable()
+ /*   private void OnEnable()
     {
         // Subscribe to the OnPlayerLoaded event
         SceneLoader.OnPlayerLoaded += OnPlayerLoaded;
@@ -34,5 +34,5 @@ public class PlayerSpawnHandler : MonoBehaviour
     player.transform.position = spawnPoint.transform.position;
     player.transform.rotation = spawnPoint.transform.rotation;
     Debug.Log($"Player moved to position {player.transform.position}");
-}
+}*/
 }

@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
     private bool movementDisabled;
     private Animator animator;
     private bool isSprinting;
+    private bool jumpForceApplied = false;
 
     private void Start()
     {
@@ -125,14 +126,19 @@ public class PlayerController : MonoBehaviour
             Debug.Log("Jump requested.");
             jumpRequested = true;
             lastJumpTime = Time.time;
-            velocity.y = jumpForce; // Apply upward velocity
-            animator.SetBool("IsJumping", true); // Trigger jump animation
+
+            // Trigger jump animation
+            animator.SetBool("IsJumping", true);
+            //velocity.y = jumpForce;
+            velocity.y = 0.1f;
+            Debug.Log("IsJumping set to true.");
         }
 
-        // Reset jump request after leaving the ground
+        // Reset jump request after landing
         if (isGrounded && velocity.y <= 0)
         {
             jumpRequested = false;
+            jumpForceApplied = false; // Reset the flag
             animator.SetBool("IsJumping", false); // Reset jump animation
         }
     }
@@ -170,14 +176,14 @@ public class PlayerController : MonoBehaviour
         // Perform a capsule cast to check for ground
         isGrounded = Physics.CapsuleCast(capsuleBottom, capsuleTop, controller.radius, Vector3.down, out RaycastHit hit, checkDistance, groundLayer);
 
-        // Debug the capsule cast
-        Debug.DrawLine(capsuleBottom, capsuleBottom + Vector3.down * checkDistance, isGrounded ? Color.green : Color.red);
-
         // Prevent grounding immediately after jumping
         if (Time.time < lastJumpTime + jumpGroundingPreventionTime)
         {
             isGrounded = false;
         }
+
+        // Debug the capsule cast
+        Debug.DrawLine(capsuleBottom, capsuleBottom + Vector3.down * checkDistance, isGrounded ? Color.green : Color.red);
     }
 
     private bool CanJump()
@@ -191,6 +197,12 @@ public class PlayerController : MonoBehaviour
         {
             // Update grounded state
             animator.SetBool("IsGrounded", isGrounded);
+
+            // Only update IsJumping if it's not already set
+            if (!animator.GetBool("IsJumping"))
+            {
+                animator.SetBool("IsJumping", !isGrounded && velocity.y > 0);
+            }
 
             // Update movement parameters
             Vector3 localVelocity = transform.InverseTransformDirection(controller.velocity);
@@ -216,7 +228,7 @@ public class PlayerController : MonoBehaviour
             // Adjust animation speed based on state
             if (animator.GetBool("IsJumping"))
             {
-                animator.speed = 0.8f; // Slow down the jump animation
+                animator.speed = 1.5f; // Slow down the jump animation
             }
             else if (isSprinting)
             {
@@ -237,5 +249,15 @@ public class PlayerController : MonoBehaviour
     private void StopSprinting()
     {
         isSprinting = false;
+    }
+
+    // This method will be called by the animation event
+    public void ApplyJumpForceFromEvent()
+    {
+        if (jumpForceApplied) return; // Prevent multiple calls
+
+        Debug.Log($"ApplyJumpForce called at frame: {animator.GetCurrentAnimatorStateInfo(0).normalizedTime}");
+        velocity.y = jumpForce; // Apply upward velocity
+        jumpForceApplied = true; // Mark as applied
     }
 }
