@@ -30,10 +30,14 @@ public class PlayerController : MonoBehaviour
     private bool isSprinting;
     private bool jumpForceApplied = false;
 
+    private float currentSpeed; // Add a field to track the current movement speed
+    private const float speedTransitionTime = 0.5f; // Time to transition between walk and sprint speeds
+
     private void Start()
     {
         controller = GetComponent<CharacterController>();
         animator = GetComponentInChildren<Animator>(); // Ensure this finds the Animator
+        currentSpeed = walkSpeed; // Initialize current speed to walking speed
 
         // Lock the mouse cursor to the game window
         Cursor.lockState = CursorLockMode.Locked;
@@ -84,8 +88,9 @@ public class PlayerController : MonoBehaviour
         // Calculate movement direction relative to the camera
         moveDirection = (cameraForward * inputZ + cameraRight * inputX).normalized;
 
-        // Adjust movement speed based on sprinting
-        float currentSpeed = isSprinting ? runSpeed : walkSpeed;
+        // Gradually adjust movement speed based on sprinting
+        float targetSpeed = isSprinting ? runSpeed : walkSpeed;
+        currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, Time.deltaTime / speedTransitionTime);
         moveDirection *= isGrounded ? currentSpeed : currentSpeed * airControl;
 
         // Rotate the player to face the camera's forward direction only when moving forward/backward
