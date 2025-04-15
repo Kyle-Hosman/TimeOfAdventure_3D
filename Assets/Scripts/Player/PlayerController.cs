@@ -128,10 +128,9 @@ public class PlayerController : MonoBehaviour
             lastJumpTime = Time.time;
 
             // Trigger jump animation
-            animator.SetBool("IsJumping", true);
-            //velocity.y = jumpForce;
+            animator.SetTrigger("Jump"); // Changed from SetBool to SetTrigger
             velocity.y = 0.1f;
-            Debug.Log("IsJumping set to true.");
+            Debug.Log("Jump animation triggered.");
         }
 
         // Reset jump request after landing
@@ -139,7 +138,6 @@ public class PlayerController : MonoBehaviour
         {
             jumpRequested = false;
             jumpForceApplied = false; // Reset the flag
-            animator.SetBool("IsJumping", false); // Reset jump animation
         }
     }
 
@@ -198,12 +196,6 @@ public class PlayerController : MonoBehaviour
             // Update grounded state
             animator.SetBool("IsGrounded", isGrounded);
 
-            // Only update IsJumping if it's not already set
-            if (!animator.GetBool("IsJumping"))
-            {
-                animator.SetBool("IsJumping", !isGrounded && velocity.y > 0);
-            }
-
             // Update movement parameters
             Vector3 localVelocity = transform.InverseTransformDirection(controller.velocity);
 
@@ -226,9 +218,9 @@ public class PlayerController : MonoBehaviour
             animator.SetFloat("Velocity Z", normalizedVelocityZ);
 
             // Adjust animation speed based on state
-            if (animator.GetBool("IsJumping"))
+            if (animator.GetCurrentAnimatorStateInfo(0).IsTag("Jump")) // Check if in jump state
             {
-                animator.speed = 1.5f; // Slow down the jump animation
+                animator.speed = 1.5f; // Adjust speed for jumping
             }
             else if (isSprinting)
             {
@@ -236,7 +228,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                animator.speed = Mathf.Clamp(localVelocity.magnitude / walkSpeed, 0.8f, 1.2f); // Slightly adjust for walking
+                animator.speed = Mathf.Clamp(localVelocity.magnitude / walkSpeed, 2.0f, 2.5f); // Slightly adjust for walking
             }
         }
     }
