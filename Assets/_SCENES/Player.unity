@@ -119,11 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &418321763 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 3e45b9670116d5442ace49d4a017ad40, type: 3}
-  m_PrefabInstance: {fileID: 749706193}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &418321764 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 3e45b9670116d5442ace49d4a017ad40, type: 3}
@@ -2440,8 +2435,8 @@ Animator:
   m_Avatar: {fileID: 9000000, guid: c0e345164de57b84bab5bc577b181040, type: 3}
   m_Controller: {fileID: 9100000, guid: e28aa5f37a29b424ebb78534bf96345e, type: 2}
   m_CullingMode: 0
-  m_UpdateMode: 1
-  m_ApplyRootMotion: 1
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
@@ -2491,15 +2486,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 789030871b27b274ba3ae5b4e1696fd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterController: {fileID: 6309056000254699366}
   walkSpeed: 4
   runSpeed: 8
-  jumpSpeed: 10
-  gravity: 10
-  cinemachineCamera: {fileID: 869332691}
-  swordPrefab: {fileID: 418321763}
-  swordHolder: {fileID: 6309055998949257265}
-  attackCooldown: 1
+  jumpForce: 10
+  gravity: 20
+  airControl: 0.5
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  groundCheckDistance: 0.1
 --- !u!143 &6309056000254699366
 CharacterController:
   m_ObjectHideFlags: 0
