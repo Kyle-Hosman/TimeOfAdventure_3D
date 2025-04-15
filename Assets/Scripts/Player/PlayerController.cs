@@ -132,8 +132,16 @@ public class PlayerController : MonoBehaviour
             jumpRequested = true;
             lastJumpTime = Time.time;
 
-            // Trigger jump animation
-            animator.SetTrigger("Jump"); // Changed from SetBool to SetTrigger
+            // Trigger the appropriate jump animation based on sprinting state
+            if (isSprinting)
+            {
+                animator.SetTrigger("Running_Jump"); // Trigger running jump animation
+            }
+            else
+            {
+                animator.SetTrigger("Jump"); // Trigger regular jump animation
+            }
+
             velocity.y = 0.1f;
             Debug.Log("Jump animation triggered.");
         }
