@@ -31,16 +31,6 @@ public class InputEvents
         }
     }
 
-    // Submit Input
-    public event Action<InputEventContext> onSubmitPressed;
-    public void SubmitPressed()
-    {
-        if (onSubmitPressed != null)
-        {
-            onSubmitPressed(this.inputEventContext);
-        }
-    }
-
     // Quest Log Toggle
     public event Action onQuestLogTogglePressed;
     public void QuestLogTogglePressed()

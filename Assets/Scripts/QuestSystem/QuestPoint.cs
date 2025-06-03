@@ -41,7 +41,7 @@ public class QuestPoint : MonoBehaviour
         }
 
         GameEventsManager.instance.questEvents.onQuestStateChange += QuestStateChange;
-        GameEventsManager.instance.inputEvents.onSubmitPressed += SubmitPressed;
+        GameEventsManager.instance.inputEvents.onInteractPressed += InteractPressed;
     }
 
     private IEnumerator WaitForGameEventsManager()
@@ -53,7 +53,7 @@ public class QuestPoint : MonoBehaviour
 
         // Subscribe to events once GameEventsManager is ready
         GameEventsManager.instance.questEvents.onQuestStateChange += QuestStateChange;
-        GameEventsManager.instance.inputEvents.onSubmitPressed += SubmitPressed;
+        GameEventsManager.instance.inputEvents.onInteractPressed += InteractPressed;
     }
 
     private void OnDisable()
@@ -61,14 +61,14 @@ public class QuestPoint : MonoBehaviour
         if (GameEventsManager.instance != null)
         {
             GameEventsManager.instance.questEvents.onQuestStateChange -= QuestStateChange;
-            GameEventsManager.instance.inputEvents.onSubmitPressed -= SubmitPressed;
+            GameEventsManager.instance.inputEvents.onInteractPressed -= InteractPressed;
         }
     }
 
-    private void SubmitPressed(InputEventContext inputEventContext)
+    private void InteractPressed()
     {
         //Debug.Log("SubmitPressed called on QuestPoint: " + gameObject.name + ", playerIsNear: " + playerIsNear + ", inputEventContext: " + inputEventContext);
-        if (!playerIsNear || !inputEventContext.Equals(InputEventContext.DEFAULT))
+        if (!playerIsNear /*|| !inputEventContext.Equals(InputEventContext.DEFAULT)*/)
         {
             return;
         }

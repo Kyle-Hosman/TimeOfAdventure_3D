@@ -16,6 +16,9 @@ public class DialogueManager : MonoBehaviour
     private InkExternalFunctions inkExternalFunctions;
     private InkDialogueVariables inkDialogueVariables;
 
+    private float dialogueCooldown = 0.2f; // seconds
+    private float lastDialogueEndTime = -1f;
+
     private void Awake() 
     {
         story = new Story(inkJson.text);
@@ -32,7 +35,7 @@ public class DialogueManager : MonoBehaviour
     private void OnEnable() 
     {
         GameEventsManager.instance.dialogueEvents.onEnterDialogue += EnterDialogue;
-        GameEventsManager.instance.inputEvents.onSubmitPressed += SubmitPressed;
+        GameEventsManager.instance.inputEvents.onInteractPressed += InteractPressed;
         GameEventsManager.instance.dialogueEvents.onUpdateChoiceIndex += UpdateChoiceIndex;
         GameEventsManager.instance.dialogueEvents.onUpdateInkDialogueVariable += UpdateInkDialogueVariable;
         GameEventsManager.instance.questEvents.onQuestStateChange += QuestStateChange;
@@ -41,7 +44,7 @@ public class DialogueManager : MonoBehaviour
     private void OnDisable() 
     {
         GameEventsManager.instance.dialogueEvents.onEnterDialogue -= EnterDialogue;
-        GameEventsManager.instance.inputEvents.onSubmitPressed -= SubmitPressed;
+        GameEventsManager.instance.inputEvents.onInteractPressed -= InteractPressed;
         GameEventsManager.instance.dialogueEvents.onUpdateChoiceIndex -= UpdateChoiceIndex;
         GameEventsManager.instance.dialogueEvents.onUpdateInkDialogueVariable -= UpdateInkDialogueVariable;
         GameEventsManager.instance.questEvents.onQuestStateChange -= QuestStateChange;
@@ -65,11 +68,11 @@ public class DialogueManager : MonoBehaviour
         this.currentChoiceIndex = choiceIndex;
     }
 
-    private void SubmitPressed(InputEventContext inputEventContext) 
+    private void InteractPressed() 
     {
-        // if the context isn't dialogue, we never want to register input here
-        if (!inputEventContext.Equals(InputEventContext.DIALOGUE)) 
+        if (GameEventsManager.instance.inputEvents.inputEventContext != InputEventContext.DIALOGUE)
         {
+            //Debug.Log("Input context is not DIALOGUE. Ignoring input.");
             return;
         }
 
@@ -81,6 +84,12 @@ public class DialogueManager : MonoBehaviour
         // don't enter dialogue if we've already entered
         if (dialoguePlaying) 
         {
+            return;
+        }
+        // Prevent re-entering dialogue too soon after exiting
+        if (Time.time - lastDialogueEndTime < dialogueCooldown)
+        {
+            Debug.Log("Dialogue cooldown active, not entering dialogue.");
             return;
         }
 
@@ -114,6 +123,7 @@ public class DialogueManager : MonoBehaviour
 
     private void ContinueOrExitStory() 
     {
+        Debug.Log($"ContinueOrExitStory called. story.canContinue: {story.canContinue}, currentChoices: {story.currentChoices.Count}, currentChoiceIndex: {currentChoiceIndex}");
         // make a choice, if applicable
         if (story.currentChoices.Count > 0 && currentChoiceIndex != -1)
         {
@@ -136,6 +146,7 @@ public class DialogueManager : MonoBehaviour
             // (empty choice, external function, etc...)
             if (IsLineBlank(dialogueLine) && !story.canContinue) 
             {
+                Debug.Log("Dialogue line is blank and story cannot continue. Exiting dialogue.");
                 ExitDialogue();
             }
             else 
@@ -145,12 +156,14 @@ public class DialogueManager : MonoBehaviour
         }
         else if (story.currentChoices.Count == 0)
         {
+            Debug.Log("No more choices and story cannot continue. Exiting dialogue.");
             ExitDialogue();
         }
     }
 
     private void ExitDialogue()
     {
+        Debug.Log("ExitDialogue called. Resetting input context and dialogue state.");
         dialoguePlaying = false;
 
         // inform other parts of our system that we've finished dialogue
@@ -167,6 +180,7 @@ public class DialogueManager : MonoBehaviour
 
         // reset story state
         story.ResetState();
+        lastDialogueEndTime = Time.time;
     }
 
     private bool IsLineBlank(string dialogueLine)
