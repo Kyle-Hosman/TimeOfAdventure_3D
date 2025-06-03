@@ -5,7 +5,7 @@ public class InputEvents
 {
     public InputEventContext inputEventContext { get; private set; } = InputEventContext.DEFAULT;
 
-    public void ChangeInputEventContext(InputEventContext newContext) 
+    public void ChangeInputEventContext(InputEventContext newContext)
     {
         Debug.Log($"Changing InputEventContext from {inputEventContext} to {newContext}");
         this.inputEventContext = newContext;
@@ -13,9 +13,9 @@ public class InputEvents
 
     // Movement Input
     public event Action<Vector3> onMovePressed; // Updated to use Vector3 for 3D movement
-    public void MovePressed(Vector3 moveDir) 
+    public void MovePressed(Vector3 moveDir)
     {
-        if (onMovePressed != null) 
+        if (onMovePressed != null)
         {
             onMovePressed(moveDir);
         }
@@ -35,7 +35,7 @@ public class InputEvents
     public event Action<InputEventContext> onSubmitPressed;
     public void SubmitPressed()
     {
-        if (onSubmitPressed != null) 
+        if (onSubmitPressed != null)
         {
             onSubmitPressed(this.inputEventContext);
         }
@@ -45,7 +45,7 @@ public class InputEvents
     public event Action onQuestLogTogglePressed;
     public void QuestLogTogglePressed()
     {
-        if (onQuestLogTogglePressed != null) 
+        if (onQuestLogTogglePressed != null)
         {
             onQuestLogTogglePressed();
         }
@@ -55,7 +55,7 @@ public class InputEvents
     public event Action onInventoryTogglePressed;
     public void InventoryTogglePressed()
     {
-        if (onInventoryTogglePressed != null) 
+        if (onInventoryTogglePressed != null)
         {
             onInventoryTogglePressed();
         }
@@ -116,6 +116,15 @@ public class InputEvents
         if (onSprintReleased != null)
         {
             onSprintReleased();
+        }
+    }
+    
+    public event Action onAttackPressed;
+    public void AttackPressed()
+    {
+        if (onAttackPressed != null)
+        {
+            onAttackPressed();
         }
     }
 }

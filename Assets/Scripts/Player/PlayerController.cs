@@ -48,12 +48,21 @@ public class PlayerController : MonoBehaviour
     {
         GameEventsManager.instance.inputEvents.onSprintPressed += StartSprinting;
         GameEventsManager.instance.inputEvents.onSprintReleased += StopSprinting;
+        GameEventsManager.instance.inputEvents.onJumpPressed += OnJumpPressed;
+        GameEventsManager.instance.inputEvents.onAttackPressed += OnAttackPressed;
+        GameEventsManager.instance.playerEvents.onDisablePlayerMovement += DisablePlayerMovement;
+        GameEventsManager.instance.playerEvents.onEnablePlayerMovement += EnablePlayerMovement;
+        
     }
 
     private void OnDisable()
     {
         GameEventsManager.instance.inputEvents.onSprintPressed -= StartSprinting;
         GameEventsManager.instance.inputEvents.onSprintReleased -= StopSprinting;
+        GameEventsManager.instance.inputEvents.onJumpPressed -= OnJumpPressed;
+        GameEventsManager.instance.inputEvents.onAttackPressed -= OnAttackPressed;
+        GameEventsManager.instance.playerEvents.onDisablePlayerMovement -= DisablePlayerMovement;
+        GameEventsManager.instance.playerEvents.onEnablePlayerMovement -= EnablePlayerMovement;
     }
 
     private void Update()
@@ -123,37 +132,46 @@ public class PlayerController : MonoBehaviour
         controller.Move(velocity * Time.deltaTime);
     }
 
-    private void HandleJump()
+    public void DisablePlayerMovement()
     {
-        // Check for jump input
-        if (Input.GetKeyDown(KeyCode.Space) && CanJump())
+        movementDisabled = true;
+    }
+
+    public void EnablePlayerMovement()
+    {
+        movementDisabled = false;
+    }
+
+    private void OnJumpPressed()
+    {
+        if (CanJump())
         {
             Debug.Log("Jump requested.");
             jumpRequested = true;
             lastJumpTime = Time.time;
 
-            // Trigger the appropriate jump animation based on sprinting state
             if (isSprinting)
             {
-                animator.SetTrigger("Running_Jump"); // Trigger running jump animation
+                animator.SetTrigger("Running_Jump");
                 Debug.Log("Running_Jump animation triggered.");
             }
             else
             {
-                animator.SetTrigger("Jump"); // Trigger regular jump animation
+                animator.SetTrigger("Jump");
                 Debug.Log("Jump animation triggered.");
             }
 
             velocity.y = 0.1f;
         }
+    }
 
-        // Reset jump request after landing
+    private void HandleJump()
+    {
         if (isGrounded && velocity.y <= 0)
         {
             jumpRequested = false;
-            jumpForceApplied = false; // Reset the flag
+            jumpForceApplied = false;
 
-            // Reset triggers to avoid being stuck
             animator.ResetTrigger("Running_Jump");
             animator.ResetTrigger("Jump");
         }
@@ -161,23 +179,30 @@ public class PlayerController : MonoBehaviour
 
     private void HandleSprinting()
     {
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            isSprinting = true;
-            moveDirection *= runSpeed / walkSpeed; // Increase speed
-        }
-        else
-        {
-            isSprinting = false;
-        }
+        // if (Input.GetKey(KeyCode.LeftShift))
+        // {
+        //     isSprinting = true;
+        //     moveDirection *= runSpeed / walkSpeed; // Increase speed
+        // }
+        // else
+        // {
+        //     isSprinting = false;
+        // }
     }
 
+    private void OnAttackPressed()
+    {
+        if (animator != null)
+        {
+            animator.SetTrigger("Attack");
+        }
+    }
     private void HandleAttacking()
     {
-        if (Input.GetMouseButtonDown(0)) // Left mouse button
-        {
-            animator.SetTrigger("Attack"); // Trigger attack animation
-        }
+        // if (Input.GetMouseButtonDown(0)) // Left mouse button
+        // {
+        //     animator.SetTrigger("Attack"); // Trigger attack animation
+        // }
     }
 
     private void GroundCheck()
