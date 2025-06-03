@@ -267,7 +267,7 @@ public class PlayerController : MonoBehaviour
             }
             else if (isSprinting)
             {
-                animator.speed = Mathf.Clamp(localVelocity.magnitude / runSpeed, 1.2f, 1.5f); // Slightly adjust for running
+                animator.speed = Mathf.Clamp(localVelocity.magnitude / runSpeed, 1.5f, 0.5f); // Slightly adjust for running
             }
             else
             {

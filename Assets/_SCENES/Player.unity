@@ -3799,9 +3799,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   walkSpeed: 3
   runSpeed: 6
-  jumpForce: 8
-  gravity: 20
-  airControl: 0.5
+  jumpForce: 10
+  gravity: 25
+  airControl: 1
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
