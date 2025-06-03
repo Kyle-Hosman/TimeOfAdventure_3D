@@ -33,9 +33,9 @@ public class MiscEvents
     public event Action onHealthPotionCollected;
     public void HealthPotionCollected()
     {
-        if (onMushroomCollected != null)
+        if (onHealthPotionCollected != null)
         {
-            onMushroomCollected();
+            onHealthPotionCollected();
         }
     }
 }

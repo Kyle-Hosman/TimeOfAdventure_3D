@@ -8,7 +8,6 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private InventorySO inventorySO;
 
     private Dictionary<string, ItemSO> itemMap;
-    private bool isInventoryOpen = false;
 
     private void Awake()
     {

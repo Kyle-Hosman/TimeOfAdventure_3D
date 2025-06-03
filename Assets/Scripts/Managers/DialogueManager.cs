@@ -123,7 +123,7 @@ public class DialogueManager : MonoBehaviour
 
     private void ContinueOrExitStory() 
     {
-        Debug.Log($"ContinueOrExitStory called. story.canContinue: {story.canContinue}, currentChoices: {story.currentChoices.Count}, currentChoiceIndex: {currentChoiceIndex}");
+        //Debug.Log($"ContinueOrExitStory called. story.canContinue: {story.canContinue}, currentChoices: {story.currentChoices.Count}, currentChoiceIndex: {currentChoiceIndex}");
         // make a choice, if applicable
         if (story.currentChoices.Count > 0 && currentChoiceIndex != -1)
         {
@@ -146,7 +146,7 @@ public class DialogueManager : MonoBehaviour
             // (empty choice, external function, etc...)
             if (IsLineBlank(dialogueLine) && !story.canContinue) 
             {
-                Debug.Log("Dialogue line is blank and story cannot continue. Exiting dialogue.");
+                //Debug.Log("Dialogue line is blank and story cannot continue. Exiting dialogue.");
                 ExitDialogue();
             }
             else 
@@ -156,14 +156,14 @@ public class DialogueManager : MonoBehaviour
         }
         else if (story.currentChoices.Count == 0)
         {
-            Debug.Log("No more choices and story cannot continue. Exiting dialogue.");
+            //Debug.Log("No more choices and story cannot continue. Exiting dialogue.");
             ExitDialogue();
         }
     }
 
     private void ExitDialogue()
     {
-        Debug.Log("ExitDialogue called. Resetting input context and dialogue state.");
+        //Debug.Log("ExitDialogue called. Resetting input context and dialogue state.");
         dialoguePlaying = false;
 
         // inform other parts of our system that we've finished dialogue

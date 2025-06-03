@@ -4,7 +4,7 @@ using System.Collections;
 
 public class DoorTrigger : MonoBehaviour
 {
-    [Header("Scene Transition Settings")]
+    /*[Header("Scene Transition Settings")]
     [SerializeField] private string targetSceneName; // The scene to load
     [SerializeField] private string currentEnvironmentSceneName; // The current environment scene
 
@@ -23,5 +23,5 @@ public class DoorTrigger : MonoBehaviour
                 Debug.LogError("SceneLoader not found in the Managers scene.");
             }
         }
-    }
+    }*/
 }

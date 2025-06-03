@@ -7,7 +7,6 @@ public class HealthPotion : MonoBehaviour
 {
     [Header("Config")]
     [SerializeField] private float respawnTimeSeconds = 8;
-    [SerializeField] private int mushroomsCollected = 1;
 
     private BoxCollider boxCollider;
     private MeshRenderer visual;
