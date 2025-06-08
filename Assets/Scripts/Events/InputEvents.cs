@@ -126,7 +126,7 @@ public class InputEvents
             onRunPressed();
         }
     }
-    
+
     public event Action onRunReleased;
     public void RunReleased()
     {
@@ -144,4 +144,15 @@ public class InputEvents
             onWalkTogglePressed();
         }
     }
+
+    public event Action onPreviousPressed;
+    public void PreviousPressed()
+    {
+        if (onPreviousPressed != null)
+        {
+            onPreviousPressed();
+        }
+    }
+    
+    
 }

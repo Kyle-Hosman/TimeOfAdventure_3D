@@ -36,10 +36,13 @@ public class PlayerController : MonoBehaviour
 
     private bool walkToggle = true; // true = walk, false = run (default to walk)
 
+    public GameObject swordObject; // Assign in Inspector
+    private bool swordEquipped = true;
+
     private void Start()
     {
         controller = GetComponent<CharacterController>();
-        animator = GetComponentInChildren<Animator>(); // Ensure this finds the Animator
+        animator = GetComponent<Animator>(); // Ensure this finds the Animator
         currentSpeed = walkSpeed; // Initialize current speed to walking speed
 
         // Lock the mouse cursor to the game window
@@ -58,7 +61,8 @@ public class PlayerController : MonoBehaviour
         GameEventsManager.instance.inputEvents.onWalkTogglePressed += OnWalkTogglePressed; // Subscribe to walk toggle
         GameEventsManager.instance.playerEvents.onDisablePlayerMovement += DisablePlayerMovement;
         GameEventsManager.instance.playerEvents.onEnablePlayerMovement += EnablePlayerMovement;
-        
+        GameEventsManager.instance.inputEvents.onPreviousPressed += ToggleSword;
+
     }
 
     private void OnDisable()
@@ -72,6 +76,7 @@ public class PlayerController : MonoBehaviour
         GameEventsManager.instance.inputEvents.onWalkTogglePressed -= OnWalkTogglePressed; // Unsubscribe
         GameEventsManager.instance.playerEvents.onDisablePlayerMovement -= DisablePlayerMovement;
         GameEventsManager.instance.playerEvents.onEnablePlayerMovement -= EnablePlayerMovement;
+        GameEventsManager.instance.inputEvents.onPreviousPressed -= ToggleSword;
     }
 
     private void Update()
@@ -147,7 +152,8 @@ public class PlayerController : MonoBehaviour
     {
         // No direct input checks here. State is set by event handlers.
         // walkToggle determines if we are walking or running (unless sprinting)
-        if (!isSprinting) {
+        if (!isSprinting)
+        {
             isRunning = !walkToggle;
         }
     }
@@ -210,6 +216,7 @@ public class PlayerController : MonoBehaviour
             animator.SetTrigger("Attack");
         }
     }
+
 
     private void DisablePlayerMovement()
     {
@@ -349,5 +356,20 @@ public class PlayerController : MonoBehaviour
         Debug.Log($"ApplyJumpForce called at frame: {animator.GetCurrentAnimatorStateInfo(0).normalizedTime}");
         velocity.y = jumpForce; // Apply upward velocity
         jumpForceApplied = true; // Mark as applied
+    }
+
+    private void ToggleSword()
+    {
+        if (animator != null)
+        {
+            animator.SetTrigger("Sword_Equip");
+        }
+    }
+    
+    public void ToggleSwordObject()
+    {
+        swordEquipped = !swordEquipped;
+        if (swordObject != null)
+            swordObject.SetActive(swordEquipped);
     }
 }

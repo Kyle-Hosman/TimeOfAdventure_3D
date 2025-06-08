@@ -122,4 +122,13 @@ public class InputManager : MonoBehaviour
             GameEventsManager.instance.inputEvents.WalkTogglePressed();
         }
     }
+
+    public void PreviousPressed(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            Debug.Log("Previous pressed: Unequip/Equip sword");
+            GameEventsManager.instance.inputEvents.PreviousPressed();
+        }
+    }
 }
