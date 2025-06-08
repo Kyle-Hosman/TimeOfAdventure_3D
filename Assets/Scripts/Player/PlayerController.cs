@@ -6,7 +6,8 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Movement Settings")]
     public float walkSpeed = 5f;
-    public float runSpeed = 10f;
+    public float runSpeed = 8f; // Now represents mid-speed running
+    public float sprintSpeed = 12f; // New, fastest speed
     public float jumpForce = 10f;
     public float gravity = 20f;
     public float airControl = 0.5f;
@@ -24,14 +25,16 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 moveDirection;
     private Vector3 inputDirection;
-    private bool isRunning;
+    private bool isRunning; // True if running (mid-speed), false if walking
+    private bool isSprinting; // True if sprinting (fastest)
     private bool movementDisabled;
     private Animator animator;
-    private bool isSprinting;
     private bool jumpForceApplied = false;
 
     private float currentSpeed; // Add a field to track the current movement speed
     private const float speedTransitionTime = 0.5f; // Time to transition between walk and sprint speeds
+
+    private bool walkToggle = true; // true = walk, false = run (default to walk)
 
     private void Start()
     {
@@ -48,8 +51,11 @@ public class PlayerController : MonoBehaviour
     {
         GameEventsManager.instance.inputEvents.onSprintPressed += StartSprinting;
         GameEventsManager.instance.inputEvents.onSprintReleased += StopSprinting;
+        GameEventsManager.instance.inputEvents.onRunPressed += StartRunning;
+        GameEventsManager.instance.inputEvents.onRunReleased += StopRunning;
         GameEventsManager.instance.inputEvents.onJumpPressed += OnJumpPressed;
         GameEventsManager.instance.inputEvents.onAttackPressed += OnAttackPressed;
+        GameEventsManager.instance.inputEvents.onWalkTogglePressed += OnWalkTogglePressed; // Subscribe to walk toggle
         GameEventsManager.instance.playerEvents.onDisablePlayerMovement += DisablePlayerMovement;
         GameEventsManager.instance.playerEvents.onEnablePlayerMovement += EnablePlayerMovement;
         
@@ -59,23 +65,23 @@ public class PlayerController : MonoBehaviour
     {
         GameEventsManager.instance.inputEvents.onSprintPressed -= StartSprinting;
         GameEventsManager.instance.inputEvents.onSprintReleased -= StopSprinting;
+        GameEventsManager.instance.inputEvents.onRunPressed -= StartRunning;
+        GameEventsManager.instance.inputEvents.onRunReleased -= StopRunning;
         GameEventsManager.instance.inputEvents.onJumpPressed -= OnJumpPressed;
         GameEventsManager.instance.inputEvents.onAttackPressed -= OnAttackPressed;
+        GameEventsManager.instance.inputEvents.onWalkTogglePressed -= OnWalkTogglePressed; // Unsubscribe
         GameEventsManager.instance.playerEvents.onDisablePlayerMovement -= DisablePlayerMovement;
         GameEventsManager.instance.playerEvents.onEnablePlayerMovement -= EnablePlayerMovement;
     }
 
     private void Update()
     {
-        if (movementDisabled) return; // Prevent movement if disabled
-
-        // Handle movement, jumping, sprinting, and attacking
+        if (movementDisabled) return;
         HandleMovement();
         HandleJump();
+        HandleRunning(); // New
         HandleSprinting();
         HandleAttacking();
-
-        // Update Animator parameters
         UpdateAnimator();
     }
 
@@ -97,8 +103,13 @@ public class PlayerController : MonoBehaviour
         // Calculate movement direction relative to the camera
         moveDirection = (cameraForward * inputZ + cameraRight * inputX).normalized;
 
-        // Gradually adjust movement speed based on sprinting
-        float targetSpeed = isSprinting ? runSpeed : walkSpeed;
+        // Determine speed
+        float targetSpeed = walkSpeed;
+        if (isSprinting)
+            targetSpeed = sprintSpeed;
+        else if (isRunning)
+            targetSpeed = runSpeed;
+        // else walking
         currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, Time.deltaTime / speedTransitionTime);
         moveDirection *= isGrounded ? currentSpeed : currentSpeed * airControl;
 
@@ -132,14 +143,23 @@ public class PlayerController : MonoBehaviour
         controller.Move(velocity * Time.deltaTime);
     }
 
-    public void DisablePlayerMovement()
+    private void HandleRunning()
     {
-        movementDisabled = true;
+        // No direct input checks here. State is set by event handlers.
+        // walkToggle determines if we are walking or running (unless sprinting)
+        if (!isSprinting) {
+            isRunning = !walkToggle;
+        }
     }
 
-    public void EnablePlayerMovement()
+    private void StartRunning()
     {
-        movementDisabled = false;
+        isRunning = true;
+    }
+
+    private void StopRunning()
+    {
+        isRunning = false;
     }
 
     private void OnJumpPressed()
@@ -179,15 +199,8 @@ public class PlayerController : MonoBehaviour
 
     private void HandleSprinting()
     {
-        // if (Input.GetKey(KeyCode.LeftShift))
-        // {
-        //     isSprinting = true;
-        //     moveDirection *= runSpeed / walkSpeed; // Increase speed
-        // }
-        // else
-        // {
-        //     isSprinting = false;
-        // }
+        // If you use input events for sprinting, update this logic to set isSprinting only
+        // and let HandleRunning handle the mid-speed run
     }
 
     private void OnAttackPressed()
@@ -197,6 +210,23 @@ public class PlayerController : MonoBehaviour
             animator.SetTrigger("Attack");
         }
     }
+
+    private void DisablePlayerMovement()
+    {
+        movementDisabled = true;
+    }
+
+    private void EnablePlayerMovement()
+    {
+        movementDisabled = false;
+    }
+
+    private void OnWalkTogglePressed()
+    {
+        walkToggle = !walkToggle;
+        Debug.Log($"WalkToggle is now {(walkToggle ? "WALK" : "RUN")}");
+    }
+
     private void HandleAttacking()
     {
         // if (Input.GetMouseButtonDown(0)) // Left mouse button
@@ -243,22 +273,43 @@ public class PlayerController : MonoBehaviour
             Vector3 localVelocity = transform.InverseTransformDirection(controller.velocity);
 
             // Determine the correct max speed based on whether the player is sprinting
-            float maxSpeed = isSprinting ? runSpeed : walkSpeed;
+            float maxSpeed = walkSpeed;
+            if (isSprinting)
+                maxSpeed = sprintSpeed;
+            else if (isRunning)
+                maxSpeed = runSpeed;
 
             // Normalize Velocity X and Z based on the current speed (walk or run)
-            float normalizedVelocityX = Mathf.Clamp(localVelocity.x / runSpeed, -1f, 1f); // Always normalize to runSpeed for blend tree
-            float normalizedVelocityZ = Mathf.Clamp(localVelocity.z / runSpeed, -1f, 1f); // Always normalize to runSpeed for blend tree
+            float normalizedVelocityX = Mathf.Clamp(localVelocity.x / maxSpeed, -1f, 1f); // Always normalize to runSpeed for blend tree
+            float normalizedVelocityZ = Mathf.Clamp(localVelocity.z / maxSpeed, -1f, 1f); // Always normalize to runSpeed for blend tree
 
-            // Scale the values for walking if not sprinting
-            if (!isSprinting)
+            // Scale for blend tree: walk = 0.5, run = 1, sprint = 1.5
+            float walkScale = 0.5f;
+            float runScale = 1.0f;
+            float sprintScale = 1.5f;
+            if (isSprinting)
             {
-                normalizedVelocityX *= walkSpeed / runSpeed; // Scale down to walking range
-                normalizedVelocityZ *= walkSpeed / runSpeed; // Scale down to walking range
+                normalizedVelocityX *= sprintScale;
+                normalizedVelocityZ *= sprintScale;
+            }
+            else if (isRunning)
+            {
+                normalizedVelocityX *= runScale;
+                normalizedVelocityZ *= runScale;
+            }
+            else // walking
+            {
+                normalizedVelocityX *= walkScale;
+                normalizedVelocityZ *= walkScale;
             }
 
             // Set the animator parameters
             animator.SetFloat("Velocity X", normalizedVelocityX);
             animator.SetFloat("Velocity Z", normalizedVelocityZ);
+
+            // Optionally set animator bools for running/sprinting
+            //animator.SetBool("IsRunning", isRunning);
+            //animator.SetBool("IsSprinting", isSprinting);
 
             // Adjust animation speed based on state
             if (animator.GetCurrentAnimatorStateInfo(0).IsTag("Jump")) // Check if in jump state
@@ -267,11 +318,15 @@ public class PlayerController : MonoBehaviour
             }
             else if (isSprinting)
             {
-                animator.speed = Mathf.Clamp(localVelocity.magnitude / runSpeed, 1.5f, 0.5f); // Slightly adjust for running
+                animator.speed = Mathf.Clamp(localVelocity.magnitude / sprintSpeed, 1.5f, 0.5f); // Slightly adjust for running
+            }
+            else if (isRunning)
+            {
+                animator.speed = Mathf.Clamp(localVelocity.magnitude / runSpeed, 1.2f, 1.5f); // Slightly adjust for running
             }
             else
             {
-                animator.speed = Mathf.Clamp(localVelocity.magnitude / walkSpeed, 2.0f, 2.5f); // Slightly adjust for walking
+                animator.speed = Mathf.Clamp(localVelocity.magnitude / walkSpeed, 1.0f, 1.2f); // Slightly adjust for walking
             }
         }
     }

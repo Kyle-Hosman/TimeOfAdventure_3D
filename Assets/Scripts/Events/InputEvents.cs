@@ -108,13 +108,40 @@ public class InputEvents
             onSprintReleased();
         }
     }
-    
+
     public event Action onAttackPressed;
     public void AttackPressed()
     {
         if (onAttackPressed != null)
         {
             onAttackPressed();
+        }
+    }
+
+    public event Action onRunPressed;
+    public void RunPressed()
+    {
+        if (onRunPressed != null)
+        {
+            onRunPressed();
+        }
+    }
+    
+    public event Action onRunReleased;
+    public void RunReleased()
+    {
+        if (onRunReleased != null)
+        {
+            onRunReleased();
+        }
+    }
+
+    public event Action onWalkTogglePressed;
+    public void WalkTogglePressed()
+    {
+        if (onWalkTogglePressed != null)
+        {
+            onWalkTogglePressed();
         }
     }
 }

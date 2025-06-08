@@ -564,7 +564,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1315321627}
         m_TargetAssemblyTypeName: InputManager, Assembly-CSharp
-        m_MethodName: SubmitPressed
+        m_MethodName: WalkTogglePressed
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -574,8 +574,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_ActionId: 8adeb5d7-a2e4-40b3-8720-9800f85e5f22
-    m_ActionName: 'Player/Submit[/Keyboard/e]'
+    m_ActionId: 7640ceb2-b6d5-48a7-b973-6c32cf7e20e5
+    m_ActionName: 'Player/WalkToggle[/Keyboard/capsLock]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

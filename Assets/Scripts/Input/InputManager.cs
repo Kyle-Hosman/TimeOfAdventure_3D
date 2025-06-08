@@ -97,4 +97,29 @@ public class InputManager : MonoBehaviour
             GameEventsManager.instance.inputEvents.AttackPressed();
         }
     }
+
+    public void onRunPressed(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            GameEventsManager.instance.inputEvents.RunPressed();
+        }
+    }
+
+    public void onRunReleased(InputAction.CallbackContext context)
+    {
+        if (context.canceled)
+        {
+            GameEventsManager.instance.inputEvents.RunReleased();
+        }
+    }
+
+    public void WalkTogglePressed(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            Debug.Log("CapsLock pressed: WalkTogglePressed called");
+            GameEventsManager.instance.inputEvents.WalkTogglePressed();
+        }
+    }
 }
