@@ -39,6 +39,8 @@ public class PlayerController : MonoBehaviour
     public GameObject swordObject; // Assign in Inspector
     private bool swordEquipped = true;
 
+    private int attackIndex = 0; // 0 = inward, 1 = outward
+
     private void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -216,7 +218,15 @@ public class PlayerController : MonoBehaviour
         {
             if (animator != null)
             {
-                animator.SetTrigger("Attack");
+                if (attackIndex == 0)
+                {
+                    animator.SetTrigger("Attack_Inward");
+                }
+                else
+                {
+                    animator.SetTrigger("Attack_Outward");
+                }
+                attackIndex = 1 - attackIndex; // Toggle between 0 and 1
             }
         }
         
