@@ -131,4 +131,15 @@ public class InputManager : MonoBehaviour
             GameEventsManager.instance.inputEvents.PreviousPressed();
         }
     }
+
+    public void BlockPressed(InputAction.CallbackContext context)
+    {
+        if (context.started) {
+            GameEventsManager.instance.inputEvents.BlockPressed();
+        }
+        else if (context.canceled) {
+            GameEventsManager.instance.inputEvents.BlockReleased();
+        }
+    }
+
 }

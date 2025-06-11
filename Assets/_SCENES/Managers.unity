@@ -588,6 +588,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 7640ceb2-b6d5-48a7-b973-6c32cf7e20e5
     m_ActionName: 'Player/WalkToggle[/Keyboard/capsLock]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1315321627}
+        m_TargetAssemblyTypeName: InputManager, Assembly-CSharp
+        m_MethodName: BlockPressed
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 33d06c41-2bc9-449f-a5ad-9a26c6610857
+    m_ActionName: 'Player/Block[/Mouse/rightButton]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

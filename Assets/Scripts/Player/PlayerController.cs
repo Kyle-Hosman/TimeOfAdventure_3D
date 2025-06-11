@@ -60,11 +60,12 @@ public class PlayerController : MonoBehaviour
         GameEventsManager.instance.inputEvents.onRunReleased += StopRunning;
         GameEventsManager.instance.inputEvents.onJumpPressed += OnJumpPressed;
         GameEventsManager.instance.inputEvents.onAttackPressed += OnAttackPressed;
-        GameEventsManager.instance.inputEvents.onWalkTogglePressed += OnWalkTogglePressed; // Subscribe to walk toggle
+        GameEventsManager.instance.inputEvents.onWalkTogglePressed += OnWalkTogglePressed; 
         GameEventsManager.instance.playerEvents.onDisablePlayerMovement += DisablePlayerMovement;
         GameEventsManager.instance.playerEvents.onEnablePlayerMovement += EnablePlayerMovement;
         GameEventsManager.instance.inputEvents.onPreviousPressed += ToggleSword;
-
+        GameEventsManager.instance.inputEvents.onBlockPressed += OnBlockPressed;
+        GameEventsManager.instance.inputEvents.onBlockReleased += OnBlockReleased;
     }
 
     private void OnDisable()
@@ -75,10 +76,12 @@ public class PlayerController : MonoBehaviour
         GameEventsManager.instance.inputEvents.onRunReleased -= StopRunning;
         GameEventsManager.instance.inputEvents.onJumpPressed -= OnJumpPressed;
         GameEventsManager.instance.inputEvents.onAttackPressed -= OnAttackPressed;
-        GameEventsManager.instance.inputEvents.onWalkTogglePressed -= OnWalkTogglePressed; // Unsubscribe
+        GameEventsManager.instance.inputEvents.onWalkTogglePressed -= OnWalkTogglePressed;
         GameEventsManager.instance.playerEvents.onDisablePlayerMovement -= DisablePlayerMovement;
         GameEventsManager.instance.playerEvents.onEnablePlayerMovement -= EnablePlayerMovement;
         GameEventsManager.instance.inputEvents.onPreviousPressed -= ToggleSword;
+        GameEventsManager.instance.inputEvents.onBlockPressed -= OnBlockPressed;
+        GameEventsManager.instance.inputEvents.onBlockReleased -= OnBlockReleased;
     }
 
     private void Update()
@@ -86,7 +89,7 @@ public class PlayerController : MonoBehaviour
         if (movementDisabled) return;
         HandleMovement();
         HandleJump();
-        HandleRunning(); // New
+        HandleRunning();
         HandleSprinting();
         HandleAttacking();
         UpdateAnimator();
@@ -230,6 +233,26 @@ public class PlayerController : MonoBehaviour
             }
         }
         
+    }
+
+    private void OnBlockPressed()
+    {
+        if (movementDisabled) return; // Prevent blocking if movement is disabled
+        if (swordEquipped && swordObject != null)
+        {
+            if (animator != null)
+            {
+                animator.SetBool("IsBlocking", true);
+            }
+        }
+    }
+
+    private void OnBlockReleased()
+    {
+        if (animator != null)
+        {
+            animator.SetBool("IsBlocking", false);
+        }
     }
 
 
