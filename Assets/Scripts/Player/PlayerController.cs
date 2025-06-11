@@ -211,10 +211,15 @@ public class PlayerController : MonoBehaviour
 
     private void OnAttackPressed()
     {
-        if (animator != null)
+        if (movementDisabled) return; // Prevent attack if movement is disabled
+        if (swordEquipped && swordObject != null)
         {
-            animator.SetTrigger("Attack");
+            if (animator != null)
+            {
+                animator.SetTrigger("Attack");
+            }
         }
+        
     }
 
 
