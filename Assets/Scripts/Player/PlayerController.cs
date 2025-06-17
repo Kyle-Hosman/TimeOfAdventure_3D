@@ -60,12 +60,13 @@ public class PlayerController : MonoBehaviour
         GameEventsManager.instance.inputEvents.onRunReleased += StopRunning;
         GameEventsManager.instance.inputEvents.onJumpPressed += OnJumpPressed;
         GameEventsManager.instance.inputEvents.onAttackPressed += OnAttackPressed;
-        GameEventsManager.instance.inputEvents.onWalkTogglePressed += OnWalkTogglePressed; 
+        GameEventsManager.instance.inputEvents.onWalkTogglePressed += OnWalkTogglePressed;
         GameEventsManager.instance.playerEvents.onDisablePlayerMovement += DisablePlayerMovement;
         GameEventsManager.instance.playerEvents.onEnablePlayerMovement += EnablePlayerMovement;
         GameEventsManager.instance.inputEvents.onPreviousPressed += ToggleSword;
         GameEventsManager.instance.inputEvents.onBlockPressed += OnBlockPressed;
         GameEventsManager.instance.inputEvents.onBlockReleased += OnBlockReleased;
+        //GameEventsManager.instance.playerEvents.onDealDamage += OnDealDamage;
     }
 
     private void OnDisable()
@@ -82,6 +83,7 @@ public class PlayerController : MonoBehaviour
         GameEventsManager.instance.inputEvents.onPreviousPressed -= ToggleSword;
         GameEventsManager.instance.inputEvents.onBlockPressed -= OnBlockPressed;
         GameEventsManager.instance.inputEvents.onBlockReleased -= OnBlockReleased;
+        //GameEventsManager.instance.playerEvents.onDealDamage -= OnDealDamage;
     }
 
     private void Update()
@@ -233,6 +235,25 @@ public class PlayerController : MonoBehaviour
             }
         }
         
+    }
+
+    public void TryDealDamage()
+    {
+        float attackRange = 2f;
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position + Vector3.up, transform.forward, out hit, attackRange))
+        {
+            if (hit.collider.CompareTag("Enemy"))
+            {
+                DealDamageToEnemy(hit.collider.gameObject);
+            }
+        }
+    }
+
+    private void DealDamageToEnemy(GameObject enemy)
+    {
+        int damageAmount = 10; // Set your damage value
+        GameEventsManager.instance.playerEvents.DealDamage(enemy, damageAmount);
     }
 
     private void OnBlockPressed()

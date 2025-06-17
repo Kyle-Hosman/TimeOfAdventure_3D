@@ -18,6 +18,24 @@ public class EnemyNPC : MonoBehaviour
             animator = GetComponent<Animator>();
     }
 
+    private void OnEnable()
+    {
+        GameEventsManager.instance.playerEvents.onDealDamage += OnDealDamage;
+    }
+
+    private void OnDisable()
+    {
+        GameEventsManager.instance.playerEvents.onDealDamage -= OnDealDamage;
+    }
+
+    private void OnDealDamage(GameObject target, int amount)
+    {
+        if (target == this.gameObject)
+        {
+            TakeDamage(amount);
+        }
+    }
+
     // Call this from your player's attack logic (e.g., via collision, trigger, or raycast)
     public void TakeDamage(int amount)
     {

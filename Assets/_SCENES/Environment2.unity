@@ -13356,6 +13356,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: NPC_Enemy
       objectReference: {fileID: 0}
+    - target: {fileID: 1145152676679883166, guid: bdb1f2e78a000cf4aa58a5d49d988918, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 1145152676679883167, guid: bdb1f2e78a000cf4aa58a5d49d988918, type: 3}
       propertyPath: m_AnimatePhysics
       value: 0
