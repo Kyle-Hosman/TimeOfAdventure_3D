@@ -241,11 +241,14 @@ public class PlayerController : MonoBehaviour
     {
         float attackRange = 2f;
         RaycastHit hit;
+        Debug.Log("TryDealDamage called");
         if (Physics.Raycast(transform.position + Vector3.up, transform.forward, out hit, attackRange))
         {
-            if (hit.collider.CompareTag("Enemy"))
+            Debug.Log("Raycast hit: " + hit.collider.name);
+            EnemyNPC enemyNPC = hit.collider.GetComponentInParent<EnemyNPC>();
+            if (enemyNPC != null)
             {
-                DealDamageToEnemy(hit.collider.gameObject);
+                DealDamageToEnemy(enemyNPC.gameObject);
             }
         }
     }
@@ -253,6 +256,7 @@ public class PlayerController : MonoBehaviour
     private void DealDamageToEnemy(GameObject enemy)
     {
         int damageAmount = 10; // Set your damage value
+        Debug.Log($"DealDamageToEnemy called for: {enemy.name} (ID: {enemy.GetInstanceID()})");
         GameEventsManager.instance.playerEvents.DealDamage(enemy, damageAmount);
     }
 

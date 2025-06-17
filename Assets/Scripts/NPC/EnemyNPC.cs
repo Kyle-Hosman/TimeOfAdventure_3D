@@ -16,6 +16,8 @@ public class EnemyNPC : MonoBehaviour
         currentHealth = maxHealth;
         if (animator == null)
             animator = GetComponent<Animator>();
+
+        //GameEventsManager.instance.playerEvents.onDealDamage += OnDealDamage;
     }
 
     private void OnEnable()
@@ -25,13 +27,16 @@ public class EnemyNPC : MonoBehaviour
 
     private void OnDisable()
     {
-        GameEventsManager.instance.playerEvents.onDealDamage -= OnDealDamage;
+        if (GameEventsManager.instance != null && GameEventsManager.instance.playerEvents != null)
+            GameEventsManager.instance.playerEvents.onDealDamage -= OnDealDamage;
     }
 
     private void OnDealDamage(GameObject target, int amount)
     {
+        Debug.Log($"OnDealDamage called. Target: {target.name} (ID: {target.GetInstanceID()}), This: {gameObject.name} (ID: {gameObject.GetInstanceID()})");
         if (target == this.gameObject)
         {
+            Debug.Log($"Enemy {gameObject.name} took {amount} damage.");
             TakeDamage(amount);
         }
     }
@@ -43,7 +48,7 @@ public class EnemyNPC : MonoBehaviour
 
         currentHealth -= amount;
         if (animator != null)
-            animator.SetTrigger("Hit"); // Optional: play hit animation
+            animator.SetTrigger("GetHit"); // Optional: play hit animation
 
         if (currentHealth <= 0)
         {
@@ -62,6 +67,6 @@ public class EnemyNPC : MonoBehaviour
         if (col != null) col.enabled = false;
 
         // Optionally destroy after delay
-        Destroy(gameObject, 2f);
+        Destroy(gameObject, 5f);
     }
 }

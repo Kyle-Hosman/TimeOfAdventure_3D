@@ -78,6 +78,7 @@ public class PlayerEvents
     public event Action<GameObject, int> onDealDamage; // (target, amount)
     public void DealDamage(GameObject target, int amount)
     {
+        Debug.Log($"DealDamage called. PlayerEvents instance ID: {this.GetHashCode()}, onDealDamage is null? {onDealDamage == null}. Target: {target.name} (ID: {target.GetInstanceID()})");
         if (onDealDamage != null)
             onDealDamage(target, amount);
     }
