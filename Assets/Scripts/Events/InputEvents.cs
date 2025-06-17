@@ -153,6 +153,24 @@ public class InputEvents
             onPreviousPressed();
         }
     }
-    
+
+    public event Action onBlockPressed;
+    public void BlockPressed()
+    {
+        if (onBlockPressed != null)
+        {
+            onBlockPressed();
+        }
+    }
+
+    public event Action onBlockReleased;
+    public void BlockReleased()
+    {
+        if (onBlockReleased != null)
+        {
+            onBlockReleased();
+        }
+    }
+
     
 }

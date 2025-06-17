@@ -6,7 +6,7 @@ public class PlayerEvents
     public event Action onDisablePlayerMovement;
     public void DisablePlayerMovement()
     {
-        if (onDisablePlayerMovement != null) 
+        if (onDisablePlayerMovement != null)
         {
             onDisablePlayerMovement();
         }
@@ -15,63 +15,71 @@ public class PlayerEvents
     public event Action onEnablePlayerMovement;
     public void EnablePlayerMovement()
     {
-        if (onEnablePlayerMovement != null) 
+        if (onEnablePlayerMovement != null)
         {
             onEnablePlayerMovement();
         }
     }
 
     public event Action<int> onExperienceGained;
-    public void ExperienceGained(int experience) 
+    public void ExperienceGained(int experience)
     {
-        if (onExperienceGained != null) 
+        if (onExperienceGained != null)
         {
             onExperienceGained(experience);
         }
     }
 
     public event Action<int> onPlayerLevelChange;
-    public void PlayerLevelChange(int level) 
+    public void PlayerLevelChange(int level)
     {
-        if (onPlayerLevelChange != null) 
+        if (onPlayerLevelChange != null)
         {
             onPlayerLevelChange(level);
         }
     }
 
     public event Action<int> onPlayerExperienceChange;
-    public void PlayerExperienceChange(int experience) 
+    public void PlayerExperienceChange(int experience)
     {
-        if (onPlayerExperienceChange != null) 
+        if (onPlayerExperienceChange != null)
         {
             onPlayerExperienceChange(experience);
         }
     }
 
     public event Action<int> onPlayerHealthChange;
-    public void PlayerHealthChanged(int health) 
+    public void PlayerHealthChanged(int health)
     {
-        if (onPlayerHealthChange != null) 
+        if (onPlayerHealthChange != null)
         {
             onPlayerHealthChange(health);
         }
     }
 
     public event Action<int> onPlayerHealthGained;
-    public void PlayerHealthGained(int health) 
+    public void PlayerHealthGained(int health)
     {
-        if (onPlayerHealthGained != null) 
+        if (onPlayerHealthGained != null)
         {
             onPlayerHealthGained(health);
         }
     }
 
     public event Action onPlayerDeath;
-    public void PlayerDeath() 
+    public void PlayerDeath()
     {
-        if (onPlayerDeath != null) 
+        if (onPlayerDeath != null)
         {
             onPlayerDeath();
         }
+    }
+    
+    public event Action<GameObject, int> onDealDamage; // (target, amount)
+    public void DealDamage(GameObject target, int amount)
+    {
+        Debug.Log($"DealDamage called. PlayerEvents instance ID: {this.GetHashCode()}, onDealDamage is null? {onDealDamage == null}. Target: {target.name} (ID: {target.GetInstanceID()})");
+        if (onDealDamage != null)
+            onDealDamage(target, amount);
     }
 }

@@ -8,6 +8,8 @@ public class EditorSceneBootstrapper : MonoBehaviour
     [SerializeField] private string managersSceneName = "Managers";
     [SerializeField] private string uiSceneName = "UI";
     [SerializeField] private string playerSceneName = "Player";
+    [SerializeField] private GameObject gameplayRoot;
+    [SerializeField] private GameObject mainCamera;
 
     private void Awake()
     {
@@ -16,6 +18,10 @@ public class EditorSceneBootstrapper : MonoBehaviour
         {
             return;
         }
+
+        // Deactivate gameplay root for runtime init
+        if (gameplayRoot != null)
+            gameplayRoot.SetActive(false);
 
         Debug.Log("EditorSceneBootstrapper: Ensuring required scenes are loaded for testing.");
         StartCoroutine(LoadRequiredScenes());
@@ -45,5 +51,9 @@ public class EditorSceneBootstrapper : MonoBehaviour
         }
 
         Debug.Log("EditorSceneBootstrapper: All required scenes are loaded.");
+        if (gameplayRoot != null)
+            gameplayRoot.SetActive(true);
+        if (mainCamera != null)
+            mainCamera.SetActive(false);
     }
 }

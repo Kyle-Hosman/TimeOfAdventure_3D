@@ -33,6 +33,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Block",
+                    "type": "Button",
+                    "id": "33d06c41-2bc9-449f-a5ad-9a26c6610857",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Interact",
                     "type": "Button",
                     "id": "852140f2-7766-474d-8707-702459ba45f3",
@@ -552,6 +561,28 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse;Gamepad",
                     "action": "WalkToggle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6d7dd50b-e377-46c9-8d15-790314907508",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Block",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "eb554efd-84a8-47fd-9b5d-1c6aac1ead13",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Block",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

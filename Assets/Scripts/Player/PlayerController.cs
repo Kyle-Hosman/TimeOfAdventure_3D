@@ -39,6 +39,8 @@ public class PlayerController : MonoBehaviour
     public GameObject swordObject; // Assign in Inspector
     private bool swordEquipped = true;
 
+    private int attackIndex = 0; // 0 = inward, 1 = outward
+
     private void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -58,11 +60,13 @@ public class PlayerController : MonoBehaviour
         GameEventsManager.instance.inputEvents.onRunReleased += StopRunning;
         GameEventsManager.instance.inputEvents.onJumpPressed += OnJumpPressed;
         GameEventsManager.instance.inputEvents.onAttackPressed += OnAttackPressed;
-        GameEventsManager.instance.inputEvents.onWalkTogglePressed += OnWalkTogglePressed; // Subscribe to walk toggle
+        GameEventsManager.instance.inputEvents.onWalkTogglePressed += OnWalkTogglePressed;
         GameEventsManager.instance.playerEvents.onDisablePlayerMovement += DisablePlayerMovement;
         GameEventsManager.instance.playerEvents.onEnablePlayerMovement += EnablePlayerMovement;
         GameEventsManager.instance.inputEvents.onPreviousPressed += ToggleSword;
-
+        GameEventsManager.instance.inputEvents.onBlockPressed += OnBlockPressed;
+        GameEventsManager.instance.inputEvents.onBlockReleased += OnBlockReleased;
+        //GameEventsManager.instance.playerEvents.onDealDamage += OnDealDamage;
     }
 
     private void OnDisable()
@@ -73,10 +77,13 @@ public class PlayerController : MonoBehaviour
         GameEventsManager.instance.inputEvents.onRunReleased -= StopRunning;
         GameEventsManager.instance.inputEvents.onJumpPressed -= OnJumpPressed;
         GameEventsManager.instance.inputEvents.onAttackPressed -= OnAttackPressed;
-        GameEventsManager.instance.inputEvents.onWalkTogglePressed -= OnWalkTogglePressed; // Unsubscribe
+        GameEventsManager.instance.inputEvents.onWalkTogglePressed -= OnWalkTogglePressed;
         GameEventsManager.instance.playerEvents.onDisablePlayerMovement -= DisablePlayerMovement;
         GameEventsManager.instance.playerEvents.onEnablePlayerMovement -= EnablePlayerMovement;
         GameEventsManager.instance.inputEvents.onPreviousPressed -= ToggleSword;
+        GameEventsManager.instance.inputEvents.onBlockPressed -= OnBlockPressed;
+        GameEventsManager.instance.inputEvents.onBlockReleased -= OnBlockReleased;
+        //GameEventsManager.instance.playerEvents.onDealDamage -= OnDealDamage;
     }
 
     private void Update()
@@ -84,7 +91,7 @@ public class PlayerController : MonoBehaviour
         if (movementDisabled) return;
         HandleMovement();
         HandleJump();
-        HandleRunning(); // New
+        HandleRunning();
         HandleSprinting();
         HandleAttacking();
         UpdateAnimator();
@@ -211,9 +218,65 @@ public class PlayerController : MonoBehaviour
 
     private void OnAttackPressed()
     {
+        if (movementDisabled) return; // Prevent attack if movement is disabled
+        if (swordEquipped && swordObject != null)
+        {
+            if (animator != null)
+            {
+                if (attackIndex == 0)
+                {
+                    animator.SetTrigger("Attack_Inward");
+                }
+                else
+                {
+                    animator.SetTrigger("Attack_Outward");
+                }
+                attackIndex = 1 - attackIndex; // Toggle between 0 and 1
+            }
+        }
+        
+    }
+
+    public void TryDealDamage()
+    {
+        float attackRange = 2f;
+        RaycastHit hit;
+        Debug.Log("TryDealDamage called");
+        if (Physics.Raycast(transform.position + Vector3.up, transform.forward, out hit, attackRange))
+        {
+            Debug.Log("Raycast hit: " + hit.collider.name);
+            EnemyNPC enemyNPC = hit.collider.GetComponentInParent<EnemyNPC>();
+            if (enemyNPC != null)
+            {
+                DealDamageToEnemy(enemyNPC.gameObject);
+            }
+        }
+    }
+
+    private void DealDamageToEnemy(GameObject enemy)
+    {
+        int damageAmount = 10; // Set your damage value
+        Debug.Log($"DealDamageToEnemy called for: {enemy.name} (ID: {enemy.GetInstanceID()})");
+        GameEventsManager.instance.playerEvents.DealDamage(enemy, damageAmount);
+    }
+
+    private void OnBlockPressed()
+    {
+        if (movementDisabled) return; // Prevent blocking if movement is disabled
+        if (swordEquipped && swordObject != null)
+        {
+            if (animator != null)
+            {
+                animator.SetBool("IsBlocking", true);
+            }
+        }
+    }
+
+    private void OnBlockReleased()
+    {
         if (animator != null)
         {
-            animator.SetTrigger("Attack");
+            animator.SetBool("IsBlocking", false);
         }
     }
 
